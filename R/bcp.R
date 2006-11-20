@@ -52,8 +52,8 @@ function(x, w0=0.2, p0=0.2, burnin=10, mcmc=100) {
 
       # Introduce an artificial change point far from 'i' if we have only one block.
       if (b==1) {
-        if (i<n/2) rho[n-5] <- 1
-        else rho[5] <- 1
+        if (i<n/2) rho[n-2] <- 1
+        else rho[2] <- 1
         b.num = 1 + c(0,cumsum(rho[1:(n-1)]))
         b = max(b.num)
         bsqd = rep(0,b)
@@ -76,6 +76,14 @@ function(x, w0=0.2, p0=0.2, burnin=10, mcmc=100) {
 
       #############################################################
       # NOW CONSIDER rho[i] = 1, and do essentially the same thing.
+
+	# first, take out artificial change point if it exists.
+	if (temp.cp) {
+        if (i<n/2) rho[n-2] <- 0
+        else rho[2] <- 0
+        temp.cp <- FALSE
+      }
+
       rho[i] = 1
       b.num = 1 + c(0,cumsum(rho[1:(n-1)]))
       bsqd = rep(0,b+1)
@@ -105,12 +113,6 @@ function(x, w0=0.2, p0=0.2, burnin=10, mcmc=100) {
         print(i)
       }
 
-      if (temp.cp) {
-        if (i<n/2) rho[n-5] <- 0
-        else rho[5] <- 0
-        temp.cp <- FALSE
-      }
-
       # COMPARE 'p' TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING.
       rho[i] = 1*(runif(1) < p)
       b.num = 1 + c(0,cumsum(rho[1:(n-1)]))
@@ -122,7 +124,6 @@ function(x, w0=0.2, p0=0.2, burnin=10, mcmc=100) {
       # CALCULATE MU-HATS
       wstar = (W/B) * (integrate(integrand9, 0, (B*w0/W)/(1+(B*w0/W)), n=n, b=b, W=W, B=B)$value /
                        integrate(integrand10, 0, (B*w0/W)/(1+(B*w0/W)), n=n, b=b, W=W, B=B)$value)
-
       muhat = rep(0,b)
       muhat = (1 - wstar)*b.mean + wstar*mu0
 
