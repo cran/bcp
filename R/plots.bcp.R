@@ -25,9 +25,9 @@ function(x, burnin=50, mcmc=500, cbs=FALSE) {
     plot(1:length(x$data), x$data, xlab="Location", ylab="Posterior Mean", main="Posterior Means")
     lines(x$posterior.mean)
     plot(1:length(x$posterior.mean), changepoint.freq, type="l",
-         xlab="Location", ylab="Relative Frequency", main="Change Point Locations")
+         xlab="Location", ylab="Posterior Probability", main="Change Point Locations")
     plot(as.numeric(names(blocksize.dist )), blocksize.dist/nrow(x$results),
-         xlab="Count", ylab="Relative Frequency", main="Distribution of Number of Blocks")
+         xlab="Count", ylab="Posterior Probability", main="Distribution of Number of Blocks")
     }
 }
 

@@ -5,13 +5,12 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
 	n <- length(x)		# n = sample size.             
 	M <- burnin + mcmc	# M = number of iterations.                 
 	rho <- rep(0,n)		# rho = vector of 0/1, specifying a partition.
+      rho[n] <- 1
 	rhos <- matrix(0,M,n)	# rhos = matrix of rho[m] for m in 1:M.
 	blocks <- rep(0,M)	# blocks = vector of number of blocks after each iteration.
 	results <- matrix(0,M,n)	# results = matrix of posterior means.
 
-
 	# LOAD C SCRIPT 
-	#dyn.load("bcp.so")
 	out <- .C("Cbcp", 
 		PACKAGE="bcp", 
 		data = as.double(x), 
@@ -24,7 +23,6 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
         	a = as.double(p0),
 		c = as.double(w0)
       	)
-	#dyn.unload("bcp.so")
 
 	# STUFF LONG VECTORS FROM C INTO MATRICES IN R
 	start <- rep(0,M)
@@ -36,7 +34,6 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
   		results[m,] <- out$results[start[m]:end[m]]
 	}
 
-  
 	# RETURN RESULTS
 	return(list(data=x,
 		   results=results,

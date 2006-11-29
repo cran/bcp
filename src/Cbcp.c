@@ -35,7 +35,7 @@ void Cbcp(double *data,
 		double mu0; 						/* mean of data */
 		double wstar, ratio, p, p0, w0;
 		double xmax1, xmax2, xmax3, xmax4; 		        /* integral limits */
-
+                
 		/* SET UP LOCAL COPIES OF VARIABLE FOR CONVENIENCE. */	
 	
 		nn = n[0];		/* length of data */
@@ -63,7 +63,7 @@ void Cbcp(double *data,
 			sqd[j] = 0; 
 			muhat[j] = 0;
 			betai13[j] = 0;
-		}	
+        	}	
   
 		W = 0; B = 0; W0 = 0; B0 = 0; W1 = 0; B1 = 0; b = 0; mu0 = 0; wstar = 0;
 		xmax1 = 0.2; xmax4 = 0;
@@ -76,7 +76,7 @@ void Cbcp(double *data,
                   betai13[j] = (exp(lbeta((double) j+1, (double) nn-j))*pbeta((double) xmax1, (double) j+1, (double) nn-j, 1, 0))/
                   (exp(lbeta((double) j, (double) nn-j+1))*pbeta((double) xmax1, (double) j, (double) nn-j+1, 1, 0));
                 }
-                      
+           
                 /* START THE BIG LOOP--------------------------------------------------------------------------------- */
 		for(m=0; m<MM; m++) { 			/* over the interations */
 			for(i=0; i<=(nn-2); i++) { 	/* over the observations */
@@ -117,10 +117,8 @@ void Cbcp(double *data,
 							
 				/* CALCULATE WSTAR */					
                 		if (m > 0) wstar = ((float) W/(float) B)*
-							  (exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta((double) xmax4, (double) (b+3)/2, (double) (nn-b-4)/2, 1, 0))/
-							  (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax4, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
-                                
-
+                                (exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta((double) xmax4, (double) (b+3)/2, (double) (nn-b-4)/2, 1, 0))/
+                                (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax4, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
     
 				/* FIND BLOCK SIZES */
 				cursize = 0;
@@ -131,14 +129,13 @@ void Cbcp(double *data,
 						cursize = 0;
 					}
 				}
-				bsize[bnum[nn-1]] = cursize;
 				
 				/* CALCULATE BLOCK MEANS */
 				for(j=0; j<nn; j++) bmean[j] = 0;
 				for(j=0; j<nn; j++) bmean[bnum[j]-1] +=  data[j] / (double) bsize[bnum[j]-1];
 
 				/* CALCULATE MU-HATS */
-				if (m==0) for(j=0; j<nn; j++) muhat[j] = bmean[j];									
+				if (m==0) for(j=0; j<nn; j++) muhat[j] = bmean[j];					
 				else for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[j] + wstar*mu0; 			
 					
 				/* CALCULATE SQUARED DEVIATIONS */
@@ -152,7 +149,7 @@ void Cbcp(double *data,
 					sqd[j] = (data[j] - bmean[bnum[j]-1])*(data[j] - bmean[bnum[j]-1]);
 					W0 += sqd[j]; 		  
 				}
-				xmax3 = (B0*w0/W0)/(1+(B0*w0/W0));
+                                xmax3 = (B0*w0/W0)/(1+(B0*w0/W0));
 
 	/*------------------------------------------------------------------------------------------------------------------------*/
 				/* NOW CONSIDER rho[i] = 1 */
@@ -166,7 +163,7 @@ void Cbcp(double *data,
 					curblock = curblock + rho[j];
 				}
 	  
-				/* FIND NUMBER OF BLOCKS WITH rho[i] = 1. */
+				/* FIND NUMBER OF BLOCKS with rho[i] = 1. */
 				b1 = bnum[0];	 
 				for(j=0; j<nn; j++) if(b1 < bnum[j]) b1 = bnum[j];	 
 				
@@ -179,7 +176,6 @@ void Cbcp(double *data,
 						cursize = 0;			
 					}					
 				}					
-				bsize[bnum[nn-1]] = cursize; 
 				
 				/* CALCULATE BLOCK MEANS */
 				for(j=0; j<nn; j++) bmean[j] =0;
@@ -203,21 +199,16 @@ void Cbcp(double *data,
 				}
 				xmax2 = (B1*w0/W1)/(1+(B1*w0/W1));
 				
-
-
 				/* THE RATIO */
-				
 				ratio = betai13[b]*pow(W0/W1, (double) (nn-b-2)/2) * pow(B0/B1, (double) (b+1)/2) * pow(W1/B1, 0.5)*	
-					  (exp(lbeta((double) (b+2)/2, (double) (nn-b-3)/2))*pbeta((double) xmax2, (double) (b+2)/2, (double) (nn-b-3)/2, 1, 0))/
-					  (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax3, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
+					(exp(lbeta((double) (b+2)/2, (double) (nn-b-3)/2))*pbeta((double) xmax2, (double) (b+2)/2, (double) (nn-b-3)/2, 1, 0))/
+					(exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax3, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
 				p = ratio/(1 + ratio);
                                 if(b>=nn-5) p = 0;
-
   
 				/* COMPARE p TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING */
-
-				if (runif(0.0,1.0) < p) rho[i] = 1; else rho[i] = 0;				
-
+				if (runif(0.0, 1.0) < p) rho[i] = 1; else rho[i] = 0;		
+                                
 				/* RESET FLAG */
 				if (flag==1) { 	
 					if (i < (nn)/2) rho[nn - 2] = 0;	
@@ -259,7 +250,6 @@ void Cbcp(double *data,
 						cursize = 0;			
 					}					
 				}					
-				bsize[bnum[nn-1]] = cursize; 
  	
 				/* CALCULATE BLOCK MEANS */ 
 				for(j=0; j<nn; j++) bmean[j] =0;
@@ -272,7 +262,7 @@ void Cbcp(double *data,
 				
 				/* CALCULATE WSTAR */
 				wstar = (W/B)*(exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta((double) (b+3)/2, (double) (nn-b-4)/2, (double) xmax4, 1, 0))/
-						      (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) (b+1)/2, (double) (nn-b-2)/2, (double) xmax4, 1, 0));
+                                              (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) (b+1)/2, (double) (nn-b-2)/2, (double) xmax4, 1, 0));
 				for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[bnum[j]-1] + wstar*mu0; 
 				
 				/* NOTE: MUHATS ARE THETAS HERE! */
@@ -296,3 +286,5 @@ void Cbcp(double *data,
 		free(betai13);
 		
  	}  /* END MAIN  */
+
+	

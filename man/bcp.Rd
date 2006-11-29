@@ -8,7 +8,7 @@
 \title{ Bayesian Change Point }
 
 \description{
- 'bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
+ `bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
 }
 
 \usage{
@@ -31,19 +31,19 @@
  This algorithm is used when there exists an unknown partition of a sequence into contiguous blocks such that the mean is constant within blocks.}
 
 \value{
-  'bcp(x)' returns a list containing the following components:
+  `bcp(x)' returns a list containing the following components:
   \item{data}{a vector copy of the data.}
-  \item{rhos}{a matrix containing the partitions after each pass through the data.}
-  \item{blocks}{a vector of the number of blocks after each pass.}
-  \item{posterior.means}{a vector of the posterior means over the M passes.}
-  The generic accessor functions 'rhos', 'posterior.means', and 'blocks' extract various useful components of the list returned by 'bcp'.  The function 'summary.bcp' is used to obtain and print plots of the results.
+  \item{rhos}{a matrix containing the partitions after each iteration.}
+  \item{blocks}{a vector of the number of blocks after each iteration.}
+  \item{posterior.means}{a vector of the posterior means over the iterations excuding burnin.}
+  The generic accessor functions `data', `rhos', `posterior.means', and `blocks' extract various useful components of the list returned by `bcp'.  The function `plots.bcp' is used to obtain and print plots of the results.
 }
 
 \author{Chandra Erdman}
 
 \note{The vector of data must contain no missing or "NA" values.}
 
-\seealso{'plots.bcp' for plots of the results. }
+\seealso{`plots.bcp' for plots of the results. }
 
 \examples{
 

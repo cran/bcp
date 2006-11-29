@@ -6,7 +6,7 @@
 \title{ Bayesian Change Point Summary }
 
 \description{
-  'plots.bcp' produces plots of the results of the 'bcp' function.
+  `plots.bcp' produces summary plots of the results of the `bcp' function.
 }
 
 \usage{
@@ -14,27 +14,27 @@
 }
 
 \arguments{
-  \item{x}{ the result of a call to 'bcp'.}
+  \item{x}{the result of a call to `bcp'.}
   \item{burnin}{the number of burnin iterations.}
   \item{mcmc}{the number of iterations after burnin.}
   \item{cbs}{if TRUE, the results of the Circular Binary Segemntation algorithm will be provided in red.}  
 }
 
 \details{
-'plots.bcp' produces the following plots:
+`plots.bcp' produces the following plots:
      
-Posterior Means: location in the sequence versus the posterior mean over M passes. 
+Posterior Means: location in the sequence versus the posterior mean over the iterations. 
 
-Change Point Locations: location in the sequence versus the relative frequency of passes which resulted in a change point. 
+Change Point Locations: location in the sequence versus the relative frequency of iterations which resulted in a change point. 
 
-Distribution of Number of Blocks: number of blocks in the partition versus the number of passes resulting in that number of blocks.
+Distribution of Number of Blocks: number of blocks in the partition versus the number of iterations resulting in that number of blocks.
 
 }
 
 \author{Chandra Erdman}
 
 
-\seealso{'bcp' for complete results.}
+\seealso{`bcp' for complete results.}
 
 \examples{
 
