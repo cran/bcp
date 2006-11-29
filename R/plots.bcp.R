@@ -1,10 +1,10 @@
 "plots.bcp" <-
-function(x, burnin=10, mcmc=100, cbs=FALSE) {
+function(x, burnin=50, mcmc=500, cbs=FALSE) {
   x$rhos[,ncol(x$rhos)] <- 0
-  blocksize.dist=table(x$blocks[burnin:(burnin+mcmc)])
-  changepoint.freq=apply(x$rhos[burnin:(burnin+mcmc),1:dim(x$results)[2]],2,mean)
+  blocksize.dist <- table(x$blocks[burnin:(burnin+mcmc)])
+  changepoint.freq <- apply(x$rhos[burnin:(burnin+mcmc),1:dim(x$results)[2]],2,mean)
   if (cbs) {
-    require(DNAcopy)
+    require("DNAcopy")
     cbs <- segment(CNA(x$data, rep(1, length(x$data)), 1:length(x$data)), verbose = 0)
     cbs.ests <- rep(unlist(cbs$output[6]), unlist(cbs$output[5]))
     par(mfrow=c(3,1),col.lab="black",col.main="black")

@@ -10,7 +10,7 @@
 }
 
 \usage{
- plots.bcp(x, burnin=10, mcmc=100, cbs=FALSE)
+ plots.bcp(x, burnin=50, mcmc=500, cbs=FALSE)
 }
 
 \arguments{

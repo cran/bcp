@@ -12,7 +12,7 @@
 }
 
 \usage{
- bcp(x, w0 = 0.2, p0 = 0.2, burnin = 10, mcmc = 100)
+ bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500)
 }
 
 %- maybe also 'usage' for other objects documented here.
