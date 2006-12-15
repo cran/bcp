@@ -90,35 +90,22 @@ void Cbcp(double *data,
 					bnum[j] = curblock;
 					curblock = curblock + rho[j];
 				}
-					
-				/* FIND NUMBER OF BLOCKS */
-				for(j=0; j<nn; j++) {
-					b = bnum[0];
-					if(b < bnum[j]) b = bnum[j];
-				}
-				
+				b = bnum[nn-1];	
+						
 				/* INTRODUCE AN ARTIFICIAL CHANGE POINT IF WE HAVE ONLY ONE BLOCK */
 				if (b==1) {
 					flag = 1;
 					if (i < (nn)/2) rho[nn - 2] = 1;	
 					else rho[1] = 1;
 					
-					/* SET UP BLOCK NUMBER VECTOR */
+					/* REVISE BLOCK NUMBER VECTOR */
 					curblock = 1;
 					for(j=0; j<nn; j++) {
 						bnum[j] = curblock;
 						curblock = curblock + rho[j];
 					}
-						
-					/* FIND NUMBER OF BLOCKS */
-					b = 1;	 
-					for(j=0; j<nn; j++) if(b < bnum[j])  b = bnum[j];	 
+					b = 2;
 				}
-							
-				/* CALCULATE WSTAR */					
-                		if (m > 0) wstar = ((float) W/(float) B)*
-                                (exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta((double) xmax4, (double) (b+3)/2, (double) (nn-b-4)/2, 1, 0))/
-                                (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax4, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
     
 				/* FIND BLOCK SIZES */
 				cursize = 0;
@@ -134,14 +121,11 @@ void Cbcp(double *data,
 				for(j=0; j<nn; j++) bmean[j] = 0;
 				for(j=0; j<nn; j++) bmean[bnum[j]-1] +=  data[j] / (double) bsize[bnum[j]-1];
 
-				/* CALCULATE MU-HATS */
-				if (m==0) for(j=0; j<nn; j++) muhat[j] = bmean[j];					
-				else for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[j] + wstar*mu0; 			
 					
 				/* CALCULATE SQUARED DEVIATIONS */
 				B0 = 0;
 				for(k=0; k<b; k++) {	    
-					bsqd[k] = (double) (bsize[k])*(bmean[k] - mu0)*(bmean[k] - mu0);
+					bsqd[k] = ((double) bsize[k])*(bmean[k] - mu0)*(bmean[k] - mu0);
 					B0 += bsqd[k];
 				}
 				W0 = 0;
@@ -162,10 +146,7 @@ void Cbcp(double *data,
 					bnum[j] = curblock;
 					curblock = curblock + rho[j];
 				}
-	  
-				/* FIND NUMBER OF BLOCKS with rho[i] = 1. */
-				b1 = bnum[0];	 
-				for(j=0; j<nn; j++) if(b1 < bnum[j]) b1 = bnum[j];	 
+				b1 = bnum[nn-1];
 				
 				/* FIND BLOCK SIZES */
 				cursize = 0;		          
@@ -180,18 +161,13 @@ void Cbcp(double *data,
 				/* CALCULATE BLOCK MEANS */
 				for(j=0; j<nn; j++) bmean[j] =0;
 				for(j=0; j<nn; j++) bmean[bnum[j]-1] +=  data[j] / (double) bsize[bnum[j]-1]; 
-					
-				/* CALCULATE MU-HATS */
-				if (m==0) for(j=0; j<nn; j++) muhat[j] = bmean[j];			
-				else for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[bnum[j]-1] + wstar*mu0; 
 								
 				/* CALCULATE SUMS OF SQUARES */ 
 				B1 = 0;									
 				for(k=0; k<b1; k++) {	    						
-					bsqd[k] = (double) (bsize[k])*(bmean[k] - mu0)*(bmean[k] - mu0);	
+					bsqd[k] = ((double) bsize[k])*(bmean[k] - mu0)*(bmean[k] - mu0);	
 					B1 += bsqd[k];								
-				}
-				
+				}				
 				W1 = 0;									
 				for (j=0; j<nn; j++) { 							
 					sqd[j] = (data[j] - bmean[bnum[j]-1])*(data[j] - bmean[bnum[j]-1]);	
@@ -209,23 +185,14 @@ void Cbcp(double *data,
 				/* COMPARE p TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING */
 				if (runif(0.0, 1.0) < p) rho[i] = 1; else rho[i] = 0;		
                                 
-				/* RESET FLAG */
+				/* RESET FLAG IF NECESSARY */
 				if (flag==1) { 	
 					if (i < (nn)/2) rho[nn - 2] = 0;	
 					else  rho[1] = 0;
 					flag = 0;
-					
-					/* COMPUTE BLOCK NUMBER VECTOR */
-				        curblock = 1;
-				        for(j=0; j<nn; j++) {
-						bnum[j] = curblock;
-						curblock = curblock + rho[j];
-					}
-					
-					/* FIND NUMBER OF BLOCKS */
-					b = bnum[0];	 
-					for(j=0; j<nn; j++) if(b < bnum[j])  b = bnum[j];					
 				}
+				
+				} /* end this pass through all n. */
 				
 				/* COMPUTE BLOCK NUMBER VECTOR */ 				 
 				curblock = 1;
@@ -233,13 +200,8 @@ void Cbcp(double *data,
 					bnum[j] = curblock;
 					curblock = curblock + rho[j];
 				}
-		
-				/* UPDATE NUMBER OF BLOCKS */
-				for(j=0; j<nn; j++) {
-					b = bnum[0];
-					if(b < bnum[j]) b = bnum[j];
-				}
-
+				b = bnum[nn-1];
+				
 				/* FIND BLOCK SIZES */
 				cursize = 0;
 				for(j=0; j<nn; j++) bsize[j] = 0;
@@ -250,30 +212,29 @@ void Cbcp(double *data,
 						cursize = 0;			
 					}					
 				}					
- 	
+				
 				/* CALCULATE BLOCK MEANS */ 
 				for(j=0; j<nn; j++) bmean[j] =0;
-				for(j=0; j<nn; j++) bmean[bnum[j]-1] +=  data[j] / (double) bsize[bnum[j]-1]; 
-	
-				/* UPDATE rho */				 
-				if (rho[i]==0) W = W0, B = B0;
-				else W = W1, B = B1;
+				for(j=0; j<nn; j++) bmean[bnum[j]-1] +=  data[j] / ((double) bsize[bnum[j]-1]); 	
+				
+				/* GET xmax4 */				 
+				if (rho[nn-2]==0) {W = W0; B = B0;}
+				else {W = W1; B = B1;}
 				xmax4 = (B*w0/W)/(1+(B*w0/W));
-				
+								
 				/* CALCULATE WSTAR */
-				wstar = (W/B)*(exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta((double) (b+3)/2, (double) (nn-b-4)/2, (double) xmax4, 1, 0))/
-                                              (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) (b+1)/2, (double) (nn-b-2)/2, (double) xmax4, 1, 0));
-				for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[bnum[j]-1] + wstar*mu0; 
+				wstar = (W/B)*(exp(lbeta((double) (b+3)/2, (double) (nn-b-4)/2))*pbeta( (double) xmax4, (double) (b+3)/2, (double) (nn-b-4)/2,1, 0))/
+                                              (exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax4, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
+				if (wstar<=0 | wstar>=1) printf("%d %d %f %f the sky has fallen!!! %20.15f\n", m, i, W, B, wstar);
+									
+				for(j=0; j<nn; j++) muhat[j] = (1 - wstar)*bmean[bnum[j]-1] + wstar*mu0;  
 				
-				/* NOTE: MUHATS ARE THETAS HERE! */
-	
-			} /* end this pass through all n. */
-	
-			blocks[m] = b;
-			for (j=0; j<nn; j++) {
-				rhos[nn*m + j ] = rho[j];
-				results[nn*m + j] = muhat[j];
-			}
+				/* STORE RESULTS */
+				blocks[m] = b;
+				for (j=0; j<nn; j++) {
+					rhos[nn*m + j ] = rho[j];
+					results[nn*m + j] = muhat[j];
+				}
 
 		} /* done all iterations. */
 
