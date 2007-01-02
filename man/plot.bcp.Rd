@@ -1,55 +1,36 @@
-% --- Source file: bcp.Rd ---
-\name{bcp}
+% --- Source file: plot.bcp.Rd ---
+\name{plot.bcp}
 
-\alias{bcp}
+\alias{plot.bcp}
 
-%- Also NEED an '\alias' for EACH other topic documented here.
-
-\title{ Bayesian change point analysis}
+\title{ Plotting Bayesian change point results}
 
 \description{
- `bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
+  `plot.bcp' produces summary plots of the results of the `bcp' function.
 }
 
 \usage{
- bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500)
+ plot.bcp(x, ...)
 }
 
-%- maybe also 'usage' for other objects documented here.
-
 \arguments{
-  \item{x}{a vector of numerical data. }
-  \item{w0}{an optional numeric value specifying the prior variance. If  
-   no value is specified, the default value of 0.2 is used, as    
-   recommended by Barry and Hartigan.  }
-  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
-  \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin. }
+  \item{x}{the result of a call to `bcp'.}
+  \item{...}{additional arguments.}  
 }
 
 \details{
- This algorithm is used when there exists an unknown partition of a sequence into contiguous blocks such that the mean is constant within blocks.}
+`plot.bcp' produces the following plots:
+     
+Posterior Means: location in the sequence versus the posterior mean over the iterations. 
 
-\value{
-  `bcp(x)' returns a list containing the following components:
-  \item{data}{a vector copy of the data.}
-  \item{rhos}{a matrix containing the partitions after each iteration.}
-  \item{blocks}{a vector of the number of blocks after each iteration.}
-  \item{posterior.means}{a vector of the posterior means over the iterations, excuding burnin.}
-  \item{posterior.prob}{a vector of the posterior probability of changes over the iterations, excuding burnin.}
-  \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin. }
-  \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.  }
-  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
+Posterior Probability of a Change: location in the sequence versus the relative frequency of iterations which resulted in a change point. 
 
-  The generic accessor functions `data', `rhos', `blocks', and `posterior.means', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
 }
 
 \author{Chandra Erdman}
 
-\note{The vector of data must contain no missing or "NA" values.}
 
-\seealso{`plot.bcp', summary.bcp', and `print.bcp' for summaries of the results. }
+\seealso{`bcp', `summary.bcp', and `print.bcp' for complete results and summary statistics.}
 
 \examples{
 
@@ -57,9 +38,8 @@
   testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
   bcp.0 <- bcp(testdata)
   summary.bcp(bcp.0)
-  print.bcp(bcp.0)
   plot.bcp(bcp.0)
-  
+
   ##### Coriell chromosome 11 #####
   data(coriell)
   chrom11 <- na.omit(coriell$Coriell.05296[coriell$Chromosome==11])
@@ -84,7 +64,7 @@
   } else {
 	cat("DNAcopy is not loaded")
   }
-  
+
   ##### RealInt #####
   data("RealInt")
   bcp.ri <- bcp(as.vector(RealInt))
@@ -131,4 +111,4 @@ Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measureme
 Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2006), \emph{The strucchange Package, version 1.3-1}, CRAN: The Comprehensive R Network. 
 }
 
-\keyword{datasets}% at least one, from doc/KEYWORDS
+\keyword{datasets}

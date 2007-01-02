@@ -1,55 +1,33 @@
-% --- Source file: bcp.Rd ---
-\name{bcp}
+% --- Source file: print.bcp.Rd ---
+\name{print.bcp}
 
-\alias{bcp}
+\alias{print.bcp}
 
-%- Also NEED an '\alias' for EACH other topic documented here.
-
-\title{ Bayesian change point analysis}
+\title{Summarizing Bayesian change point results}
 
 \description{
- `bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
+ print method for class ``bcp''.
 }
 
 \usage{
- bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500)
+ print.bcp(x, digits = max(3, .Options$digits - 3), ...)
 }
 
-%- maybe also 'usage' for other objects documented here.
-
 \arguments{
-  \item{x}{a vector of numerical data. }
-  \item{w0}{an optional numeric value specifying the prior variance. If  
-   no value is specified, the default value of 0.2 is used, as    
-   recommended by Barry and Hartigan.  }
-  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
-  \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin. }
+  \item{x}{the result of a call to `bcp'.}
+  \item{digits}{an optional specification of the number of digits displayed in the summary statistics.}
+  \item{...}{additional arguments.}
+  
 }
 
 \details{
- This algorithm is used when there exists an unknown partition of a sequence into contiguous blocks such that the mean is constant within blocks.}
-
-\value{
-  `bcp(x)' returns a list containing the following components:
-  \item{data}{a vector copy of the data.}
-  \item{rhos}{a matrix containing the partitions after each iteration.}
-  \item{blocks}{a vector of the number of blocks after each iteration.}
-  \item{posterior.means}{a vector of the posterior means over the iterations, excuding burnin.}
-  \item{posterior.prob}{a vector of the posterior probability of changes over the iterations, excuding burnin.}
-  \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin. }
-  \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.  }
-  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
-
-  The generic accessor functions `data', `rhos', `blocks', and `posterior.means', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
+ The code for `print.bcp' was taken from the `summary.mcmc' function found in the coda package (Plummer \emph{et al.}, 2006). The function returns the posterior probability of a change point for each position, the posterior means and standard deviations.
 }
 
 \author{Chandra Erdman}
 
-\note{The vector of data must contain no missing or "NA" values.}
 
-\seealso{`plot.bcp', summary.bcp', and `print.bcp' for summaries of the results. }
+\seealso{`bcp', `summary.bcp', and `plot.bcp'.}
 
 \examples{
 
@@ -131,4 +109,4 @@ Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measureme
 Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2006), \emph{The strucchange Package, version 1.3-1}, CRAN: The Comprehensive R Network. 
 }
 
-\keyword{datasets}% at least one, from doc/KEYWORDS
+\keyword{datasets}

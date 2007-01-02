@@ -1,0 +1,13 @@
+import(methods, graphics, stats)
+export(bcp, summary.bcp, plot.bcp, print.bcp)
+S3method(summary.bcp, plot.bcp, print.bcp)
+
+
+
+
+
+
+
+
+
+
