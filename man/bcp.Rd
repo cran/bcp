@@ -36,7 +36,12 @@
   \item{rhos}{a matrix containing the partitions after each iteration.}
   \item{blocks}{a vector of the number of blocks after each iteration.}
   \item{posterior.means}{a vector of the posterior means over the iterations excuding burnin.}
-  The generic accessor functions `data', `rhos', `posterior.means', and `blocks' extract various useful components of the list returned by `bcp'.  The function `plots.bcp' is used to obtain and print plots of the results.
+  \item{burnin}{the number of burnin iterations.}
+  \item{mcmc}{the number of iterations after burnin. }
+  \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.  }
+  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
+
+  The generic accessor functions `data', `rhos', `blocks', and `posterior.means', extract various useful components of the list returned by `bcp'.  The function `plots.bcp' is used to obtain and print plots of the results.
 }
 
 \author{Chandra Erdman}
@@ -48,7 +53,7 @@
 \examples{
 
 # A random sample from a few normal distributions.
-  testdata <- c(rnorm(10), rnorm(5, 5, 1), rnorm(10))
+  testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
   bcp.0 <- bcp(testdata)
   plots.bcp(bcp.0)
 

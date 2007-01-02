@@ -10,13 +10,11 @@
 }
 
 \usage{
- plots.bcp(x, burnin=50, mcmc=500, cbs=FALSE)
+ plots.bcp(x, cbs=FALSE)
 }
 
 \arguments{
   \item{x}{the result of a call to `bcp'.}
-  \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin.}
   \item{cbs}{if TRUE, the results of the Circular Binary Segemntation algorithm will be provided in red.}  
 }
 
@@ -39,7 +37,7 @@ Distribution of Number of Blocks: number of blocks in the partition versus the n
 \examples{
 
   # A random sample from a few normal distributions.
-  testdata <- c(rnorm(10), rnorm(20, 5, 1), rnorm(10))
+  testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
   bcp.0 <- bcp(testdata)
   plots.bcp(bcp.0)
 

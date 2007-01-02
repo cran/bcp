@@ -3,7 +3,7 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
 
 	# INITIALIZATION
 	n <- length(x)		# n = sample size.             
-	M <- burnin + mcmc	# M = number of iterations.                 
+	M <- burnin + mcmc	# REMOVE THIS LINE.                 
 	rho <- rep(0,n)		# rho = vector of 0/1, specifying a partition.
       rho[n] <- 1
 	rhos <- matrix(0,M,n)	# rhos = matrix of rho[m] for m in 1:M.
@@ -15,7 +15,9 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
 		PACKAGE="bcp", 
 		data = as.double(x), 
 		n = as.integer(n), 
-		M = as.integer(M),
+		# M = as.integer(M), 	     # REMOVE THIS LINE 
+		burnin = as.integer(burnin), # ADDED THIS LINE
+		mcmc = as.integer(mcmc),     # ADDED THIS LINE
 		rho = as.integer(rho),
 		rhos = as.integer(rhos),
 		blocks = as.integer(blocks),
@@ -39,7 +41,10 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500) {
 		   results=results,
                rhos=rhos,
                blocks=out$blocks,
-               posterior.mean=apply(results[burnin:M,1:n],2,mean)
-	      	   )
+               posterior.mean=apply(results[burnin:M,1:n],2,mean),
+               burnin=burnin,  # ADDED THIS LINE
+		   mcmc=mcmc,      # ADDED THIS LINE
+	         p0=p0,		 # ADDED THIS LINE
+               w0=w0)		 # ADDED THIS LINE
               )
 }

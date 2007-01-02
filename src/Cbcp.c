@@ -15,8 +15,9 @@ Daniel Barry and J. A. Hartigan, 1993
 
 /* MAIN   */
 void Cbcp(double *data, 
-		int *n, 
-		int *M, 
+		int *n,          /* int *M, */
+                int *burnin,     /* WHY is this change desirable? */
+                int *mcmc, 
 		int *rho,			/* partition */
 		int *rhos,			/* partitions */
 		int *blocks,		        /* number of blocks after each iteration */
@@ -39,7 +40,7 @@ void Cbcp(double *data,
 		/* SET UP LOCAL COPIES OF VARIABLE FOR CONVENIENCE. */	
 	
 		nn = n[0];		/* length of data */
-		MM = M[0];	/* number of iterations */
+		MM = burnin[0] + mcmc[0];	/* number of iterations */
 		p0 = a[0]; 		/* tuning parameter */
 		w0 = c[0]; 	/* tuning parameter */
 
