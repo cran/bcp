@@ -1,56 +1,48 @@
-% --- Source file: print.bcp.Rd ---
-\name{print.bcp}
+\name{residuals.bcp}
 
-\alias{print.bcp}
+\alias{residuals.bcp}
 
-\title{Summarizing Bayesian change point results}
+\title{Extract model residuals}
 
 \description{
- print method for class ``bcp''.
+ residuals method for class ``bcp''.
 }
 
 \usage{
- print.bcp(x, digits = max(3, .Options$digits - 3), ...)
+ residuals.bcp(object, ...)
 }
 
 \arguments{
-  \item{x}{the result of a call to `bcp'.}
-  \item{digits}{an optional specification of the number of digits displayed in the summary statistics.}
+  \item{object}{the result of a call to `bcp'.}
   \item{...}{additional arguments.}
   
 }
 
-\details{
-The function returns the posterior probability of a change point for each position, the posterior means and standard deviations. These results are modeled after the `summary.mcmc' output of the coda package (Plummer \emph{et al.}, 2006). If return.mcmc=TRUE (i.e., if full mcmc results are returned), `bcp' objects can be converted into `mcmc' objects to view `mcmc' summaries -- see examples below.
+\value{
+Residuals extracted from the `bcp' object.
 }
 
 \author{Chandra Erdman}
 
 
-\seealso{`bcp', `summary.bcp', and `plot.bcp'.}
+\seealso{`bcp', `print.bcp', `summary.bcp', and `plot.bcp'.}
 
 \examples{
 
   ##### A random sample from a few normal distributions #####
   testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
   bcp.0 <- bcp(testdata)
-  print.bcp(bcp.0)
+  summary.bcp(bcp.0)
   plot.bcp(bcp.0)
-  
-  ##### An MCMC summary from the ``coda'' package #####
-   if(require("coda")) {
-     if(is.na(bcp.0$mcmc.means)==FALSE) {
-       bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
-       summary(bcp.mcmc)
-    }
-  }
+  residuals.bcp(bcp.0)
   
   ##### Coriell chromosome 11 #####
   data(coriell)
   chrom11 <- as.vector(na.omit(coriell$Coriell.05296[coriell$Chromosome==11]))
   bcp.11 <- bcp(chrom11)
-  print.bcp(bcp.11)
+  summary.bcp(bcp.11)
   plot.bcp(bcp.11)
+  residuals.bcp(bcp.11)
   
   # to see bcp and Circular Binary Segmentation results run:
   if(require("DNAcopy")) {
@@ -62,7 +54,7 @@ The function returns the posterior probability of a change point for each positi
   plot(1:n, bcp.11$posterior.mean, type="l", xlab="Location", ylab="Posterior Mean", main="Posterior Means")
   lines(cbs.ests, col="red")
   points(chrom11)
-  plot(1:n, bcp.11$posterior.prob, type="l", ylim=c(0,1), xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
+  plot(1:n, bcp.11$posterior.prob, type="l", xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
   for(i in 1:(dim(cbs$output)[1]-1)) abline(v=cbs$output$loc.end[i], col="red")
   par(op)
   } else {
@@ -72,8 +64,9 @@ The function returns the posterior probability of a change point for each positi
   ##### RealInt #####
   data("RealInt")
   bcp.ri <- bcp(as.vector(RealInt))
-  print.bcp(bcp.ri)
+  summary.bcp(bcp.ri)
   plot.bcp(bcp.ri)
+  residuals.bcp(bcp.11)
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
@@ -90,14 +83,13 @@ The function returns the posterior probability of a change point for each positi
   plot(xax, bcp.ri$posterior.mean, type="l", xlab="Time", ylab="Mean", main="Posterior Means")
   lines(xax, bp.ri, col="blue")
   points(RealInt)
-  plot(xax, bcp.ri$posterior.prob, type="l", ylim=c(0,1), xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
+  plot(xax, bcp.ri$posterior.prob, type="l", xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   par(op)
   } else {
   cat("strucchange is not loaded")
   }
-
-  
+    
 }
 
 \references{

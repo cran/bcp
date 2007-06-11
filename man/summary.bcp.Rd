@@ -10,12 +10,11 @@
 }
 
 \usage{
- summary.bcp(object, quantiles=c(0.025, 0.25, 0.5, 0.75, 0.975), digits = max(3, .Options$digits - 3), ...)
+ summary.bcp(object, digits = max(3, .Options$digits - 3), ...)
 }
 
 \arguments{
   \item{object}{the result of a call to `bcp'.}
-  \item{quantiles}{an optional vector of quantiles.}
   \item{digits}{the number of digits displayed in the summary statistics.}
   \item{...}{additional arguments.}
   
@@ -23,7 +22,7 @@
 }
 
 \details{
- The code for `summary.bcp' was taken from the `summary.mcmc' function found in the coda package (Plummer \emph{et al.}, 2006).  The function returns the posterior probability of a change point for each position, the posterior means and their quantiles over the mcmc iterations, along with the standard deviation and standard error of the mean.
+The function returns the posterior probability of a change point for each position, the posterior means and standard deviations.  These results are modeled after the `summary.mcmc' output of the coda package (Plummer \emph{et al.}, 2006).  If return.mcmc=TRUE (i.e., if full mcmc results are returned), `bcp' objects can be converted into `mcmc' objects to view `mcmc' summaries -- see examples below.
 }
 
 \author{Chandra Erdman}
@@ -39,31 +38,38 @@
   summary.bcp(bcp.0)
   plot.bcp(bcp.0)
   
+  ##### An MCMC summary from the ``coda'' package #####
+   if(require("coda")) {
+     if(is.na(bcp.0$mcmc.means)==FALSE) {
+       bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
+       summary(bcp.mcmc)
+    }
+  }
+  
   ##### Coriell chromosome 11 #####
   data(coriell)
-  chrom11 <- na.omit(coriell$Coriell.05296[coriell$Chromosome==11])
-  n <- length(chrom11)
-  bcp.11 <- bcp(chrom11[1:n])
+  chrom11 <- as.vector(na.omit(coriell$Coriell.05296[coriell$Chromosome==11]))
+  bcp.11 <- bcp(chrom11)
   summary.bcp(bcp.11)
   plot.bcp(bcp.11)
   
   # to see bcp and Circular Binary Segmentation results run:
   if(require("DNAcopy")) {
-  bcp.11$rhos[,ncol(bcp.11$rhos)] <- 0
-  changepoint.freq <- apply(bcp.11$rhos[bcp.11$burnin:(bcp.11$burnin+bcp.11$burnin),1:dim(bcp.11$results)[2]],2,mean)
-  cbs <- segment(CNA(chrom11[1:n], rep(1, n), 1:n), verbose = 0)
+  bcp.11$posterior.prob[length(bcp.11$posterior.brob)] <- 0
+  n <- length(chrom11)
+  cbs <- segment(CNA(chrom11, rep(1, n), 1:n), verbose = 0)
   cbs.ests <- rep(unlist(cbs$output[6]), unlist(cbs$output[5]))
   op <- par(mfrow=c(2,1),col.lab="black",col.main="black")
   plot(1:n, bcp.11$posterior.mean, type="l", xlab="Location", ylab="Posterior Mean", main="Posterior Means")
   lines(cbs.ests, col="red")
   points(chrom11)
-  plot(1:n, changepoint.freq, type="l", xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
+  plot(1:n, bcp.11$posterior.prob, type="l", ylim=c(0,1), xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
   for(i in 1:(dim(cbs$output)[1]-1)) abline(v=cbs$output$loc.end[i], col="red")
   par(op)
   } else {
 	cat("DNAcopy is not loaded")
   }
-
+  
   ##### RealInt #####
   data("RealInt")
   bcp.ri <- bcp(as.vector(RealInt))
@@ -72,8 +78,7 @@
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
-  bcp.ri$rhos[,ncol(bcp.ri$rhos)] <- 0
-  changepoint.freq <- apply(bcp.ri$rhos[bcp.ri$burnin:(bcp.ri$burnin+bcp.ri$burnin),1:dim(bcp.ri$results)[2]],2,mean)
+  bcp.ri$posterior.prob[length(bcp.ri$posterior.brob)] <- 0
   bp <- breakpoints(RealInt ~ 1, h = 2)$breakpoints
   rho <- rep(0, length(RealInt))
   rho[bp] <- 1
@@ -86,7 +91,7 @@
   plot(xax, bcp.ri$posterior.mean, type="l", xlab="Time", ylab="Mean", main="Posterior Means")
   lines(xax, bp.ri, col="blue")
   points(RealInt)
-  plot(xax, changepoint.freq, type="l", xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
+  plot(xax, bcp.ri$posterior.prob, type="l", ylim=c(0,1), xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   par(op)
   } else {

@@ -12,7 +12,7 @@
 }
 
 \usage{
- bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500)
+ bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500, return.mcmc=FALSE)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -25,6 +25,7 @@
   \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
   \item{burnin}{the number of burnin iterations.}
   \item{mcmc}{the number of iterations after burnin. }
+  \item{return.mcmc}{if return.mcmc=TRUE the posterior means and the partitions after each iteration are returned.}
 }
 
 \details{
@@ -33,16 +34,19 @@
 \value{
   `bcp(x)' returns a list containing the following components:
   \item{data}{a vector copy of the data.}
-  \item{rhos}{a matrix containing the partitions after each iteration.}
+  \item{return.mcmc}{if return.mcmc=TRUE the posterior means and the partitions after each iteration are returned.}
+  \item{mcmc.means}{if return.mcmc=TRUE mcmc.means contains the posterior means at for each iteration conditional on the state of the partition.}
+  \item{mcmc.rhos}{if return.mcmc=TRUE rhos contains the partitions after each iteration.}
   \item{blocks}{a vector of the number of blocks after each iteration.}
-  \item{posterior.means}{a vector of the posterior means over the iterations, excuding burnin.}
+  \item{posterior.mean}{a vector of the posterior means over the iterations, excuding burnin.}
+  \item{posterior.var}{a vector of the posterior variances over the iterations, excuding burnin.}
   \item{posterior.prob}{a vector of the posterior probability of changes over the iterations, excuding burnin.}
   \item{burnin}{the number of burnin iterations.}
   \item{mcmc}{the number of iterations after burnin. }
   \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.  }
   \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
 
-  The generic accessor functions `data', `rhos', `blocks', and `posterior.means', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
+  The generic accessor functions `data', `blocks', and `posterior.mean', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
 }
 
 \author{Chandra Erdman}
@@ -57,28 +61,26 @@
   testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
   bcp.0 <- bcp(testdata)
   summary.bcp(bcp.0)
-  print.bcp(bcp.0)
   plot.bcp(bcp.0)
   
   ##### Coriell chromosome 11 #####
   data(coriell)
-  chrom11 <- na.omit(coriell$Coriell.05296[coriell$Chromosome==11])
-  n <- length(chrom11)
-  bcp.11 <- bcp(chrom11[1:n])
+  chrom11 <- as.vector(na.omit(coriell$Coriell.05296[coriell$Chromosome==11]))
+  bcp.11 <- bcp(chrom11)
   summary.bcp(bcp.11)
   plot.bcp(bcp.11)
   
   # to see bcp and Circular Binary Segmentation results run:
   if(require("DNAcopy")) {
-  bcp.11$rhos[,ncol(bcp.11$rhos)] <- 0
-  changepoint.freq <- apply(bcp.11$rhos[bcp.11$burnin:(bcp.11$burnin+bcp.11$burnin),1:dim(bcp.11$results)[2]],2,mean)
-  cbs <- segment(CNA(chrom11[1:n], rep(1, n), 1:n), verbose = 0)
+  bcp.11$posterior.prob[length(bcp.11$posterior.brob)] <- 0
+  n <- length(chrom11)
+  cbs <- segment(CNA(chrom11, rep(1, n), 1:n), verbose = 0)
   cbs.ests <- rep(unlist(cbs$output[6]), unlist(cbs$output[5]))
   op <- par(mfrow=c(2,1),col.lab="black",col.main="black")
   plot(1:n, bcp.11$posterior.mean, type="l", xlab="Location", ylab="Posterior Mean", main="Posterior Means")
   lines(cbs.ests, col="red")
   points(chrom11)
-  plot(1:n, changepoint.freq, type="l", xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
+  plot(1:n, bcp.11$posterior.prob, type="l", ylim=c(0,1), xlab="Location", ylab="Posterior Probability of a Change", main="Change Point Locations")
   for(i in 1:(dim(cbs$output)[1]-1)) abline(v=cbs$output$loc.end[i], col="red")
   par(op)
   } else {
@@ -93,8 +95,7 @@
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
-  bcp.ri$rhos[,ncol(bcp.ri$rhos)] <- 0
-  changepoint.freq <- apply(bcp.ri$rhos[bcp.ri$burnin:(bcp.ri$burnin+bcp.ri$burnin),1:dim(bcp.ri$results)[2]],2,mean)
+  bcp.ri$posterior.prob[length(bcp.ri$posterior.brob)] <- 0
   bp <- breakpoints(RealInt ~ 1, h = 2)$breakpoints
   rho <- rep(0, length(RealInt))
   rho[bp] <- 1
@@ -107,7 +108,7 @@
   plot(xax, bcp.ri$posterior.mean, type="l", xlab="Time", ylab="Mean", main="Posterior Means")
   lines(xax, bp.ri, col="blue")
   points(RealInt)
-  plot(xax, changepoint.freq, type="l", xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
+  plot(xax, bcp.ri$posterior.prob, type="l", ylim=c(0,1), xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   par(op)
   } else {

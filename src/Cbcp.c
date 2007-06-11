@@ -15,6 +15,7 @@ Daniel Barry and J. A. Hartigan, 1993
 
 /* MAIN   */
 void Cbcp(double *data, 
+		int *mcmcreturn,
 		int *n,          /* int *M, */
                 int *burnin,     /* WHY is this change desirable? */
                 int *mcmc, 
@@ -23,7 +24,10 @@ void Cbcp(double *data,
 		int *blocks,		        /* number of blocks after each iteration */
 		double *results,		/* posterior means */
 		double *a,			/* p0 */
-		double *c			/* w0 */
+		double *c,			/* w0 */
+		double *pmean,		
+		double *pvar,		
+		double *pchange	
 	) {
 		/* INITIALIZATION */
         
@@ -31,7 +35,7 @@ void Cbcp(double *data,
 		int m; 							/* over iterations */
 		int j; 							/* over observations in small loops */
 		int k; 							/* over blocks */
-		int flag, nn, MM, b, b1, cursize, curblock;
+		int flag, nn, MM, b, b1, cursize, curblock, MCMC, BURNIN;
 		double W, B, W0, W1, B0, B1; 			        /* within and betwen sums of squares */
 		double mu0; 						/* mean of data */
 		double wstar, ratio, p, p0, w0;
@@ -43,6 +47,8 @@ void Cbcp(double *data,
 		MM = burnin[0] + mcmc[0];	/* number of iterations */
 		p0 = a[0]; 		/* tuning parameter */
 		w0 = c[0]; 	/* tuning parameter */
+		MCMC = mcmc[0];
+		BURNIN = burnin[0];
 
 		/* DYNAMIC CREATION OF VECTORS AND MATRICES: ---------------------------------------- */
         
@@ -52,6 +58,7 @@ void Cbcp(double *data,
 		double *bsqd = (double *) malloc(nn*sizeof(double)); 	/* vector of block squared deviations */ 
 		double *sqd = (double *) malloc(nn*sizeof(double)); 	/* vector of squared deviations */ 
 		double *muhat = (double *) malloc(nn*sizeof(double)); 	/* vector of posterior means */
+		double *ss = (double *) malloc(nn*sizeof(double)); 	/* vector of posterior means */
 		double *betai13 = (double *) malloc(nn*sizeof(double));	/* vector of beta1/beta3 for various b */
 		
 		/* INITIALIZATION OF VARIABLES.------------------------------------------------------------------ */
@@ -232,12 +239,36 @@ void Cbcp(double *data,
 				
 				/* STORE RESULTS */
 				blocks[m] = b;
-				for (j=0; j<nn; j++) {
-					rhos[nn*m + j ] = rho[j];
-					results[nn*m + j] = muhat[j];
+				
+				if (mcmcreturn[0]==1) { 
+					for (j=0; j<nn; j++) {
+						rhos[nn*m + j ] = rho[j];
+						results[nn*m + j] = muhat[j];
+					}
 				}
-
+				
+				if (m >= BURNIN) {
+					for (j=0; j<nn; j++) {
+						pchange[j] += rho[j];
+						pmean[j] += muhat[j];
+						ss[j] += muhat[j]*muhat[j];
+					}
+				}
+				
 		} /* done all iterations. */
+		
+		for (j=0; j<nn; j++) {
+			pchange[j] = pchange[j]/MCMC;
+			pmean[j] = pmean[j]/MCMC;
+			pvar[j] = (ss[j]/MCMC - pmean[j]*pmean[j])*(nn/(nn-1));
+		}
+		
+/* 		 for (j=0; j<nn; j++) {
+ * 			printf("%d %20.15f\n", j, pchange[j]);
+ * 			printf("%d %20.15f\n", j, pmean[j]);
+ * 			printf("%d %20.15f\n", j, pvar[j]);
+ * 		} 
+ */
 
 		free(bsize);
 		free(bnum); 

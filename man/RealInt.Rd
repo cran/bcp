@@ -21,7 +21,7 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
 }
 
 \examples{
-  ##### RealInt #####
+   ##### RealInt #####
   data("RealInt")
   bcp.ri <- bcp(as.vector(RealInt))
   summary.bcp(bcp.ri)
@@ -29,8 +29,7 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
-  bcp.ri$rhos[,ncol(bcp.ri$rhos)] <- 0
-  changepoint.freq <- apply(bcp.ri$rhos[bcp.ri$burnin:(bcp.ri$burnin+bcp.ri$burnin),1:dim(bcp.ri$results)[2]],2,mean)
+  bcp.ri$posterior.prob[length(bcp.ri$posterior.brob)] <- 0
   bp <- breakpoints(RealInt ~ 1, h = 2)$breakpoints
   rho <- rep(0, length(RealInt))
   rho[bp] <- 1
@@ -39,17 +38,17 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
   bp.ri <- rep(0,length(RealInt))
   for(i in 1:length(bp.ri)) bp.ri[i] <- bp.mean[b.num[i]]
   op <- par(mfrow=c(2,1),col.lab="black",col.main="black")
-  xax <- seq(1961,1987, length=103)
+  xax <- seq(1961, 1987, length=103)
   plot(xax, bcp.ri$posterior.mean, type="l", xlab="Time", ylab="Mean", main="Posterior Means")
   lines(xax, bp.ri, col="blue")
   points(RealInt)
-  plot(xax, changepoint.freq, type="l", xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
+  plot(xax, bcp.ri$posterior.prob, type="l", ylim=c(0,1), xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   par(op)
   } else {
   cat("strucchange is not loaded")
   }
-
+  
 }
 
 \keyword{datasets}
