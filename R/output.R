@@ -118,7 +118,8 @@ summary.bcp <-
 	# print everything
 	out <- list(statistics = varstats)
 	cat("\nBayesian Change Point (bcp) output:\n\n")
-	cat("\n1. Posterior probability of a change in mean and Posterior mean for each position,")
+	cat("\nProbability of a change in mean, Posterior Mean,\n")
+	cat("and SD for each position:\n\n")
         print(out$statistics, digits=digits)
 	cat("\n")
 }
@@ -148,12 +149,13 @@ print.bcp <- function(x, digits = max(3, .Options$digits - 3), ...) {
 ########################################################################
 plot.bcp <-
 	function(x, ...) { 	
-	x$posterior.prob[ncol(x$rhos)] <- 0
+	posterior.prob <- x$posterior.prob
+	posterior.prob[length(posterior.prob)] <- 0
 		
 	op<-par(mfrow=c(2,1),col.lab="black",col.main="black")
 	plot(1:length(x$data), x$data, xlab="Location", ylab="Posterior Mean", main="Posterior Means")
 		lines(x$posterior.mean)
-	plot(1:length(x$posterior.mean), x$posterior.prob, type="l", ylim=c(0,1),
+	plot(1:length(x$posterior.mean), posterior.prob, type="l", ylim=c(0,1),
 		xlab="Location", ylab="Posterior Probability", main="Posterior Probability of a Change")
 	par(op)
 	
