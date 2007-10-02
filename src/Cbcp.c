@@ -81,8 +81,8 @@ void Cbcp(double *data,
 		
 		/* EVALUATE BETA INTEGRALS THAT ONLY DEPEND ON b. */
 		for(j=1; j<nn; j++) {
-                  betai13[j] = (exp(lbeta((double) j+1, (double) nn-j))*pbeta((double) xmax1, (double) j+1, (double) nn-j, 1, 0))/
-                  (exp(lbeta((double) j, (double) nn-j+1))*pbeta((double) xmax1, (double) j, (double) nn-j+1, 1, 0));
+                  betai13[j] = (exp(lbeta((double) j+1, (double) nn-j))*pbeta((double) p0, (double) j+1, (double) nn-j, 1, 0))/
+                  (exp(lbeta((double) j, (double) nn-j+1))*pbeta((double) p0, (double) j, (double) nn-j+1, 1, 0));
                 }
            
                 /* START THE BIG LOOP--------------------------------------------------------------------------------- */
