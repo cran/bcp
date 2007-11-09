@@ -39,11 +39,10 @@ The function returns the posterior probability of a change point for each positi
   
   ##### An MCMC summary from the ``coda'' package #####
    if(require("coda")) {
-     if(is.na(bcp.0$mcmc.means)==FALSE) {
+       bcp.0 <- bcp(testdata, return.mcmc=TRUE)
        bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
        summary(bcp.mcmc)
-    }
-  }
+   }
   
   ##### Coriell chromosome 11 #####
   data(coriell)

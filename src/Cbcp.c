@@ -16,63 +16,65 @@ Daniel Barry and J. A. Hartigan, 1993
 /* MAIN   */
 void Cbcp(double *data, 
 		int *mcmcreturn,
-		int *n,          /* int *M, */
-                int *burnin,     /* WHY is this change desirable? */
+		int *n,          
+                int *burnin,     
                 int *mcmc, 
-		int *rho,			/* partition */
-		int *rhos,			/* partitions */
-		int *blocks,		        /* number of blocks after each iteration */
-		double *results,		/* posterior means */
-		double *a,			/* p0 */
-		double *c,			/* w0 */
-		double *pmean,		
+		int *rho,			
+		int *rhos,			
+		int *blocks,		       
+		double *results,		
+		double *a,			
+		double *c,
+		double *pmean,				
 		double *pvar,		
 		double *pchange	
 	) {
+		
 		/* INITIALIZATION */
         
-		int i; 							/* over observations in big loop */
-		int m; 							/* over iterations */
-		int j; 							/* over observations in small loops */
-		int k; 							/* over blocks */
-		int flag, nn, MM, b, b1, cursize, curblock, MCMC, BURNIN;
-		double W, B, W0, W1, B0, B1; 			        /* within and betwen sums of squares */
-		double mu0; 						/* mean of data */
+		int i; 							
+		int m; 							
+		int j; 							
+		int k; 							
+		int flag, nn, MM, b, b1, cursize, curblock, MCMC, BURNIN;  /* NEW: MCMC AND BURNIN */
+		double W, B, W0, W1, B0, B1; 			       
+		double mu0; 						
 		double wstar, ratio, p, p0, w0;
-		double xmax1, xmax2, xmax3, xmax4; 		        /* integral limits */
-                
-		/* SET UP LOCAL COPIES OF VARIABLE FOR CONVENIENCE. */	
+		double xmax1, xmax2, xmax3, xmax4; 		        
 	
-		nn = n[0];		/* length of data */
-		MM = burnin[0] + mcmc[0];	/* number of iterations */
-		p0 = a[0]; 		/* tuning parameter */
-		w0 = c[0]; 	/* tuning parameter */
-		MCMC = mcmc[0];
-		BURNIN = burnin[0];
+		/* SET UP LOCAL COPIES OF VARIABLE FOR CONVENIENCE. */	
+		
+		nn = n[0];		
+		MM = burnin[0] + mcmc[0];	
+		p0 = a[0]; 		
+		w0 = c[0]; 
+		MCMC = mcmc[0];	
+		BURNIN = burnin[0];	
 
 		/* DYNAMIC CREATION OF VECTORS AND MATRICES: ---------------------------------------- */
         
-		int *bsize = (int *) malloc(nn*sizeof(int)); 		/* vector of block sizes */
-		int *bnum = (int *) malloc(nn*sizeof(int)); 		/* vector of block numbers */
-		double *bmean = (double *) malloc(nn*sizeof(double)); 	/* vector of block means */
-		double *bsqd = (double *) malloc(nn*sizeof(double)); 	/* vector of block squared deviations */ 
-		double *sqd = (double *) malloc(nn*sizeof(double)); 	/* vector of squared deviations */ 
-		double *muhat = (double *) malloc(nn*sizeof(double)); 	/* vector of posterior means */
-		double *ss = (double *) malloc(nn*sizeof(double)); 	/* vector of posterior means */
-		double *betai13 = (double *) malloc(nn*sizeof(double));	/* vector of beta1/beta3 for various b */
+		int *bsize = (int *) malloc(nn*sizeof(int)); 		
+		int *bnum = (int *) malloc(nn*sizeof(int)); 		
+		double *bmean = (double *) malloc(nn*sizeof(double)); 	
+		double *bsqd = (double *) malloc(nn*sizeof(double)); 	
+		double *sqd = (double *) malloc(nn*sizeof(double)); 	
+		double *muhat = (double *) malloc(nn*sizeof(double)); 
+		double *ss = (double *) malloc(nn*sizeof(double)); 				
+		double *betai13 = (double *) malloc(nn*sizeof(double));	
 		
 		/* INITIALIZATION OF VARIABLES.------------------------------------------------------------------ */
   
 		for(j=0; j<nn; j++) { 
-			bmean[j] = 0; 
 			bsize[j] = 0; 
 			bnum[j] = 0;
+			bmean[j] = 0; 
 			bsqd[j] = 0; 
 			sqd[j] = 0; 
 			muhat[j] = 0;
+			ss[j] = 0;			
 			betai13[j] = 0;
         	}	
-  
+
 		W = 0; B = 0; W0 = 0; B0 = 0; W1 = 0; B1 = 0; b = 0; mu0 = 0; wstar = 0;
 		xmax1 = 0.2; xmax4 = 0;
 		flag = 0;
@@ -81,13 +83,13 @@ void Cbcp(double *data,
 		
 		/* EVALUATE BETA INTEGRALS THAT ONLY DEPEND ON b. */
 		for(j=1; j<nn; j++) {
-                  betai13[j] = (exp(lbeta((double) j+1, (double) nn-j))*pbeta((double) p0, (double) j+1, (double) nn-j, 1, 0))/
-                  (exp(lbeta((double) j, (double) nn-j+1))*pbeta((double) p0, (double) j, (double) nn-j+1, 1, 0));
-                }
+                  betai13[j] = (exp(lbeta((double) j+1, (double) nn-j))*pbeta((double) p0, (double) j+1, (double) nn-j, 1, 0))/ 
+				(exp(lbeta((double) j, (double) nn-j+1))*pbeta((double) p0, (double) j, (double) nn-j+1, 1, 0)); 
+		}
            
                 /* START THE BIG LOOP--------------------------------------------------------------------------------- */
-		for(m=0; m<MM; m++) { 			/* over the interations */
-			for(i=0; i<=(nn-2); i++) { 	/* over the observations */
+		for(m=0; m<MM; m++) { 			
+			for(i=0; i<=(nn-2); i++) { 	
 				
 				/* CONSIDER rho[i] = 0 */
 				rho[i] = 0;
@@ -188,7 +190,7 @@ void Cbcp(double *data,
 					(exp(lbeta((double) (b+2)/2, (double) (nn-b-3)/2))*pbeta((double) xmax2, (double) (b+2)/2, (double) (nn-b-3)/2, 1, 0))/
 					(exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax3, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
 				p = ratio/(1 + ratio);
-                                if(b>=nn-5) p = 0;
+                                if(b>=nn-4) p = 0;		
   
 				/* COMPARE p TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING */
 				if (runif(0.0, 1.0) < p) rho[i] = 1; else rho[i] = 0;		
@@ -239,36 +241,28 @@ void Cbcp(double *data,
 				
 				/* STORE RESULTS */
 				blocks[m] = b;
-				
-				if (mcmcreturn[0]==1) { 
+				if (mcmcreturn[0]==1) {		
 					for (j=0; j<nn; j++) {
 						rhos[nn*m + j ] = rho[j];
 						results[nn*m + j] = muhat[j];
 					}
 				}
 				
-				if (m >= BURNIN) {
-					for (j=0; j<nn; j++) {
-						pchange[j] += rho[j];
-						pmean[j] += muhat[j];
-						ss[j] += muhat[j]*muhat[j];
+				if (m >= BURNIN) {					
+					for (j=0; j<nn; j++) {				
+						pchange[j] += rho[j];			
+						pmean[j] += muhat[j];			
+						ss[j] += muhat[j]*muhat[j];		
 					}
 				}
-				
+
 		} /* done all iterations. */
 		
-		for (j=0; j<nn; j++) {
-			pchange[j] = pchange[j]/MCMC;
-			pmean[j] = pmean[j]/MCMC;
-			pvar[j] = (ss[j]/MCMC - pmean[j]*pmean[j])*(nn/(nn-1));
+		for (j=0; j<nn; j++) {									
+			pchange[j] = pchange[j]/MCMC;						
+			pmean[j] = pmean[j]/MCMC;							
+			pvar[j] = (ss[j]/MCMC - pmean[j]*pmean[j])*(nn/(nn-1)); 	
 		}
-		
-/* 		 for (j=0; j<nn; j++) {
- * 			printf("%d %20.15f\n", j, pchange[j]);
- * 			printf("%d %20.15f\n", j, pmean[j]);
- * 			printf("%d %20.15f\n", j, pvar[j]);
- * 		} 
- */
 
 		free(bsize);
 		free(bnum); 
@@ -276,6 +270,7 @@ void Cbcp(double *data,
 		free(bsqd); 
 		free(sqd); 
 		free(muhat); 
+		free(ss);		
 		free(betai13);
 		
  	}  /* END MAIN  */

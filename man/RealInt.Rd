@@ -29,7 +29,7 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
-  bcp.ri$posterior.prob[length(bcp.ri$posterior.brob)] <- 0
+  bcp.ri$posterior.prob[length(bcp.ri$posterior.prob)] <- 0
   bp <- breakpoints(RealInt ~ 1, h = 2)$breakpoints
   rho <- rep(0, length(RealInt))
   rho[bp] <- 1
