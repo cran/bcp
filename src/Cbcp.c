@@ -190,7 +190,7 @@ void Cbcp(double *data,
 					(exp(lbeta((double) (b+2)/2, (double) (nn-b-3)/2))*pbeta((double) xmax2, (double) (b+2)/2, (double) (nn-b-3)/2, 1, 0))/
 					(exp(lbeta((double) (b+1)/2, (double) (nn-b-2)/2))*pbeta((double) xmax3, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0));
 				p = ratio/(1 + ratio);
-                                if(b>=nn-4) p = 0;		
+                                if(b>=nn-5) p = 0;		
   
 				/* COMPARE p TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING */
 				if (runif(0.0, 1.0) < p) rho[i] = 1; else rho[i] = 0;		
