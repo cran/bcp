@@ -40,7 +40,8 @@ void Cbcp(double *data,
 		double W, B, W0, W1, B0, B1; 			       
 		double mu0; 						
 		double wstar, ratio, p, p0, w0;
-		double xmax1, xmax2, xmax3, xmax4; 		        
+		double xmax1, xmax2, xmax3, xmax4; 	
+		double myrand;
 	
 		/* SET UP LOCAL COPIES OF VARIABLE FOR CONVENIENCE. */	
 		
@@ -193,7 +194,8 @@ void Cbcp(double *data,
                                 if(b>=nn-5) p = 0;		
   
 				/* COMPARE p TO RANDOM VALUE FROM U[0,1] AND UPDATE EVERYTHING */
-				if (runif(0.0, 1.0) < p) rho[i] = 1; else rho[i] = 0;		
+				myrand = runif(0.0, 1.0);
+				if (myrand < p) rho[i] = 1; else rho[i] = 0;		
                                 
 				/* RESET FLAG IF NECESSARY */
 				if (flag==1) { 	
@@ -261,7 +263,8 @@ void Cbcp(double *data,
 		for (j=0; j<nn; j++) {									
 			pchange[j] = pchange[j]/MCMC;						
 			pmean[j] = pmean[j]/MCMC;							
-			pvar[j] = (ss[j]/MCMC - pmean[j]*pmean[j])*(nn/(nn-1)); 	
+			pvar[j] = (ss[j]/MCMC - pmean[j]*pmean[j])*(nn/(nn-1)); 
+			if (pvar[j] < 0) pvar[j] = 0;
 		}
 
 		free(bsize);
