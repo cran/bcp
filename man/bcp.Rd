@@ -5,7 +5,7 @@
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 
-\title{ Bayesian change point analysis}
+\title{A Package for Performing a Bayesian Analysis of Change Point Problems}
 
 \description{
  `bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
@@ -36,15 +36,15 @@
   \item{data}{a vector copy of the data.}
   \item{return.mcmc}{if return.mcmc=TRUE the posterior means and the partitions after each iteration are returned.}
   \item{mcmc.means}{if return.mcmc=TRUE mcmc.means contains the posterior means at for each iteration conditional on the state of the partition.}
-  \item{mcmc.rhos}{if return.mcmc=TRUE rhos contains the partitions after each iteration.}
+  \item{mcmc.rhos}{if return.mcmc=TRUE rhos contains the partitions after each iteration. A value of 1 indicates the end of a block.}
   \item{blocks}{a vector of the number of blocks after each iteration.}
   \item{posterior.mean}{a vector of the posterior means over the iterations, excuding burnin.}
   \item{posterior.var}{a vector of the posterior variances over the iterations, excuding burnin.}
   \item{posterior.prob}{a vector of the posterior probability of changes over the iterations, excuding burnin.}
   \item{burnin}{the number of burnin iterations.}
-  \item{mcmc}{the number of iterations after burnin. }
-  \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.  }
-  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
+  \item{mcmc}{the number of iterations after burnin.}
+  \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.}
+  \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.}
 
   The generic accessor functions `data', `blocks', and `posterior.mean', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
 }

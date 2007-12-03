@@ -41,9 +41,12 @@ The function returns the posterior probability of a change point for each positi
   ##### An MCMC summary from the ``coda'' package #####
    if(require("coda")) {
        bcp.0 <- bcp(testdata, return.mcmc=TRUE)
-       bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
+       BURNIN <- bcp.0$burnin
+       M <- bcp.0$burnin + bcp.0$mcmc
+       bcp.mcmc <- as.mcmc(bcp.0$mcmc.means[BURNIN:M,])
        summary(bcp.mcmc)
-    }
+       heidel.diag(bcp.mcmc) # an example convergence diagnostic from the coda package.
+   }
   
   
   ##### Coriell chromosome 11 #####
