@@ -8,7 +8,7 @@
 \title{A Package for Performing a Bayesian Analysis of Change Point Problems}
 
 \description{
- `bcp' implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
+ \code{bcp()} implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo.  
 }
 
 \usage{
@@ -25,18 +25,18 @@
   \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan. }
   \item{burnin}{the number of burnin iterations.}
   \item{mcmc}{the number of iterations after burnin. }
-  \item{return.mcmc}{if return.mcmc=TRUE the posterior means and the partitions after each iteration are returned.}
+  \item{return.mcmc}{if \code{return.mcmc=TRUE} the posterior means and the partitions after each iteration are returned.}
 }
 
 \details{
  This algorithm is used when there exists an unknown partition of a sequence into contiguous blocks such that the mean is constant within blocks.}
 
 \value{
-  `bcp(x)' returns a list containing the following components:
+  \code{bcp()} returns a list containing the following components:
   \item{data}{a vector copy of the data.}
-  \item{return.mcmc}{if return.mcmc=TRUE the posterior means and the partitions after each iteration are returned.}
-  \item{mcmc.means}{if return.mcmc=TRUE mcmc.means contains the posterior means at for each iteration conditional on the state of the partition.}
-  \item{mcmc.rhos}{if return.mcmc=TRUE rhos contains the partitions after each iteration. A value of 1 indicates the end of a block.}
+  \item{return.mcmc}{if \code{return.mcmc=TRUE}, the posterior means and the partitions after each iteration are returned.}
+  \item{mcmc.means}{if \code{return.mcmc=TRUE}, \code{mcmc.means} contains the posterior means at for each iteration conditional on the state of the partition.}
+  \item{mcmc.rhos}{if \code{return.mcmc=TRUE}, \code{mcmc.rhos} contains the partitions after each iteration. A value of 1 indicates the end of a block.}
   \item{blocks}{a vector of the number of blocks after each iteration.}
   \item{posterior.mean}{a vector of the posterior means over the iterations, excuding burnin.}
   \item{posterior.var}{a vector of the posterior variances over the iterations, excuding burnin.}
@@ -46,14 +46,14 @@
   \item{w0}{an optional numeric value specifying the prior variance. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.}
   \item{p0}{an optional numeric value specifying the prior probability of a change point at each location in the sequence. If no value is specified, the default value of 0.2 is used, as recommended by Barry and Hartigan.}
 
-  The generic accessor functions `data', `blocks', and `posterior.mean', `posterior.prob', `burnin', `mcmc', `w0', and `p0' extract various useful components of the list returned by `bcp'.  The functions `summary.bcp', `print.bcp', and `plot.bcp' are used to obtain summaries of the results.
+  The generic accessor functions \code{data}, \code{blocks}, and \code{posterior.mean}, \code{posterior.prob}, \code{burnin}, \code{mcmc}, \code{w0}, and \code{p0} extract various useful components of the list returned by \code{bcp()}.  The functions \code{summary.bcp()}, \code{print.bcp()}, and \code{plot.bcp()} are used to obtain summaries of the results.
 }
 
-\author{Chandra Erdman}
+\author{Chandra Erdman and John W. Emerson}
 
-\note{The vector of data must contain no missing or "NA" values.}
+\note{The vector of data must contain no missing or \code{NA} values.  The user may set \code{.Random.seed} to control the MCMC if desired.}
 
-\seealso{`plot.bcp', summary.bcp', and `print.bcp' for summaries of the results. }
+\seealso{\code{\link{plot.bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for summaries of the results.}
 
 \examples{
 

@@ -6,7 +6,7 @@
 \title{Summarizing Bayesian change point results}
 
 \description{
- summary method for class ``bcp''.
+ summary method for class \code{bcp}.
 }
 
 \usage{
@@ -14,7 +14,7 @@
 }
 
 \arguments{
-  \item{object}{the result of a call to `bcp'.}
+  \item{object}{the result of a call to \code{bcp()}.}
   \item{digits}{the number of digits displayed in the summary statistics.}
   \item{...}{additional arguments.}
   
@@ -22,13 +22,13 @@
 }
 
 \details{
-The function returns the posterior probability of a change point for each position, the posterior means and standard deviations.  These results are modeled after the `summary.mcmc' output of the coda package (Plummer \emph{et al.}, 2006).  If return.mcmc=TRUE (i.e., if full mcmc results are returned), `bcp' objects can be converted into `mcmc' objects to view `mcmc' summaries -- see examples below.
+The function returns the posterior probability of a change point for each position, the posterior means and standard deviations. These results are modeled after the summary method of the coda package (Plummer \emph{et al.}, 2006). If \code{return.mcmc=TRUE} (i.e., if full MCMC results are returned), \code{bcp} objects can be converted into \code{mcmc} objects to view \code{mcmc} summaries -- see examples below.
 }
 
-\author{Chandra Erdman}
+\author{Chandra Erdman and John W. Emerson}
 
 
-\seealso{`bcp', `print.bcp', and `plot.bcp'.}
+\seealso{\code{\link{bcp}}, \code{\link{print.bcp}}, and \code{\link{plot.bcp}}.}
 
 \examples{
 

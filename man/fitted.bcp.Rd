@@ -5,7 +5,7 @@
 \title{Extract model fitted values}
 
 \description{
- fitted method for class ``bcp''.
+ fitted method for class \code{bcp}.
 }
 
 \usage{
@@ -13,19 +13,19 @@
 }
 
 \arguments{
-  \item{object}{the result of a call to `bcp'.}
+  \item{object}{the result of a call to \code{bcp()}.}
   \item{...}{additional arguments.}
   
 }
 
 \value{
-Fitted values extracted from the `bcp' object.
+Fitted values extracted from the \code{bcp} object.
 }
 
-\author{Chandra Erdman}
+\author{Chandra Erdman and John W. Emerson}
 
 
-\seealso{`bcp', `print.bcp', `summary.bcp', and `plot.bcp'.}
+\seealso{\code{\link{plot.bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for summaries of the results.}
 
 \examples{
 

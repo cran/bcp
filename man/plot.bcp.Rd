@@ -6,7 +6,7 @@
 \title{ Plotting Bayesian change point results}
 
 \description{
-  `plot.bcp' produces summary plots of the results of the `bcp' function.
+  \code{plot.bcp()} produces summary plots of the results of \code{bcp()}.
 }
 
 \usage{
@@ -14,12 +14,12 @@
 }
 
 \arguments{
-  \item{x}{the result of a call to `bcp'.}
+  \item{x}{the result of a call to \code{bcp()}.}
   \item{...}{additional arguments.}  
 }
 
 \details{
-`plot.bcp' produces the following plots:
+\code{plot.bcp()} produces the following plots:
      
 Posterior Means: location in the sequence versus the posterior mean over the iterations. 
 
@@ -27,10 +27,10 @@ Posterior Probability of a Change: location in the sequence versus the relative 
 
 }
 
-\author{Chandra Erdman}
+\author{Chandra Erdman and John W. Emerson}
 
 
-\seealso{`bcp', `summary.bcp', and `print.bcp' for complete results and summary statistics.}
+\seealso{\code{\link{bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for complete results and summary statistics.}
 
 \examples{
 

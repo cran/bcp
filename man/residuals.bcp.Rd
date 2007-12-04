@@ -5,7 +5,7 @@
 \title{Extract model residuals}
 
 \description{
- residuals method for class ``bcp''.
+ residuals method for class \code{bcp}.
 }
 
 \usage{
@@ -13,19 +13,19 @@
 }
 
 \arguments{
-  \item{object}{the result of a call to `bcp'.}
+  \item{object}{the result of a call to \code{bcp()}.}
   \item{...}{additional arguments.}
   
 }
 
 \value{
-Residuals extracted from the `bcp' object.
+Residuals extracted from the \code{bcp} object.
 }
 
-\author{Chandra Erdman}
+\author{Chandra Erdman and John W. Emerson}
 
 
-\seealso{`bcp', `print.bcp', `summary.bcp', and `plot.bcp'.}
+\seealso{\code{\link{bcp}}, \code{\link{print.bcp}}, \code{\link{summary.bcp}}, and \code{\link{plot.bcp}}.}
 
 \examples{
 
