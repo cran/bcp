@@ -35,7 +35,7 @@ Posterior Probability of a Change: location in the sequence versus the relative 
 \examples{
 
   ##### A random sample from a few normal distributions #####
-  testdata <- c(rnorm(20), rnorm(10, 5, 1), rnorm(20))
+  testdata <- c(rnorm(50), rnorm(50, 5, 1), rnorm(50))
   bcp.0 <- bcp(testdata)
   summary.bcp(bcp.0)
   plot.bcp(bcp.0)
@@ -96,8 +96,7 @@ Posterior Probability of a Change: location in the sequence versus the relative 
 }
 
 \references{
-Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. url: \url{http:
-//qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
+Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. url: \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
 
 Daniel Barry and J. A. Hartigan (1993), A Bayesian Analysis for Change Point Problems, \emph{Journal of The American Statistical Association}, \bold{88}, 309-19.
 

@@ -49,15 +49,18 @@ plot.bcp <-
 	posterior.prob[length(posterior.prob)] <- 0
 		
 	op<-par(mfrow=c(2,1),col.lab="black",col.main="black")
-	plot(1:length(x$data), x$data, xlab="Location", ylab="Posterior Mean", main="Posterior Means")
-		lines(x$posterior.mean)
-	plot(1:length(x$posterior.mean), posterior.prob, type="l", ylim=c(0,1),
-		xlab="Location", ylab="Posterior Probability", main="Posterior Probability of a Change")
+		op2 <- par(mar=c(0,4,4,2),xaxt="n", cex.axis=0.75)
+			plot(1:length(x$data), x$data, col="grey", pch=20, xlab="", ylab="Posterior Mean", main="Posterior Means and Probabilities of a Change", ...)
+			lines(x$posterior.mean, lwd=2)
+		par(op2)
+		op3 <- par(mar=c(5,4,0,2), xaxt="s", cex.axis=0.75)
+			plot(1:length(x$posterior.mean), posterior.prob, yaxt="n", type="l", ylim=c(0,1),
+			xlab="Location", ylab="Posterior Probability", main="")
+			axis(2, yaxp=c(0, 0.9, 3))
+		par(op3)
 	par(op)
 	
 }
-
-
 
 ########################################################################
 residuals.bcp <-
