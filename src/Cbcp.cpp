@@ -11,7 +11,12 @@ Daniel Barry and J. A. Hartigan, 1993
 #include <stdio.h>
 #include <math.h>
 #include <Rmath.h>
-#include <malloc.h>
+#include <stdlib.h> 
+#include <R_ext/Random.h>
+#include <vector>
+
+using namespace std;
+extern "C" { 
 
 /* MAIN   */
 void Cbcp(double *data, 
@@ -29,6 +34,8 @@ void Cbcp(double *data,
 		double *pvar,		
 		double *pchange	
 	) {
+
+	GetRNGstate();
 		
 		/* INITIALIZATION */
         
@@ -53,15 +60,25 @@ void Cbcp(double *data,
 		BURNIN = burnin[0];	
 
 		/* DYNAMIC CREATION OF VECTORS AND MATRICES: ---------------------------------------- */
-        
-		int *bsize = (int *) malloc(nn*sizeof(int)); 		
-		int *bnum = (int *) malloc(nn*sizeof(int)); 		
-		double *bmean = (double *) malloc(nn*sizeof(double)); 	
-		double *bsqd = (double *) malloc(nn*sizeof(double)); 	
-		double *sqd = (double *) malloc(nn*sizeof(double)); 	
-		double *muhat = (double *) malloc(nn*sizeof(double)); 
-		double *ss = (double *) malloc(nn*sizeof(double)); 				
-		double *betai13 = (double *) malloc(nn*sizeof(double));	
+		typedef vector<double> DoubleVec;	 
+		typedef vector<int> IntVec;
+		IntVec bsize(nn); 
+		IntVec bnum(nn); 
+		DoubleVec bmean(nn); 		
+		DoubleVec bsqd(nn); 
+		DoubleVec sqd(nn); 
+		DoubleVec muhat(nn); 
+		DoubleVec ss(nn); 
+		DoubleVec betai13(nn); 
+
+//		int *bsize = (int *) malloc(nn*sizeof(int)); 		
+//		int *bnum = (int *) malloc(nn*sizeof(int)); 		
+//		double *bmean = (double *) malloc(nn*sizeof(double)); 	
+//		double *bsqd = (double *) malloc(nn*sizeof(double)); 	
+//		double *sqd = (double *) malloc(nn*sizeof(double)); 	
+//		double *muhat = (double *) malloc(nn*sizeof(double)); 
+//		double *ss = (double *) malloc(nn*sizeof(double)); 				
+//		double *betai13 = (double *) malloc(nn*sizeof(double));	
 		
 		/* INITIALIZATION OF VARIABLES.------------------------------------------------------------------ */
   
@@ -267,15 +284,17 @@ void Cbcp(double *data,
 			if (pvar[j] < 0) pvar[j] = 0;
 		}
 
-		free(bsize);
-		free(bnum); 
-		free(bmean); 
-		free(bsqd); 
-		free(sqd); 
-		free(muhat); 
-		free(ss);		
-		free(betai13);
+		//ree(bsize);
+		//free(bnum); 
+		//free(bmean); 
+		//free(bsqd); 
+		//free(sqd); 
+		//free(muhat); 
+		//free(ss);		
+		//free(betai13);
+		
+		PutRNGstate();	
 		
  	}  /* END MAIN  */
+}
 
-	

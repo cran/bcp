@@ -1,8 +1,6 @@
 "bcp" <-
 function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
 
-	if (class(try(.Random.seed, silent=TRUE))=="try-error") junk <- runif(1)
-
 	# INITIALIZATION
 	n <- length(x)		 # n = sample size.             
 	M <- burnin + mcmc	            
