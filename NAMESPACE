@@ -1,5 +1,5 @@
 import(methods, graphics, stats)
-export(bcp, summary.bcp, plot.bcp, print.bcp, fitted.bcp, residuals.bcp)
+export(bcp, summary.bcp, plot.bcp, print.bcp, fitted.bcp, residuals.bcp, interval.prob)
 S3method(summary, bcp)
 S3method(plot, bcp)
 S3method(print, bcp)

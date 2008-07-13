@@ -24,12 +24,10 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
    ##### RealInt #####
   data("RealInt")
   bcp.ri <- bcp(as.vector(RealInt))
-  summary.bcp(bcp.ri)
   plot.bcp(bcp.ri)
   
   # to see bcp and Bai and Perron results run:
   if(require("strucchange")) {
-  bcp.ri$posterior.prob[length(bcp.ri$posterior.prob)] <- 0
   bp <- breakpoints(RealInt ~ 1, h = 2)$breakpoints
   rho <- rep(0, length(RealInt))
   rho[bp] <- 1
@@ -37,16 +35,21 @@ Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2
   bp.mean <- unlist(lapply(split(RealInt,b.num),mean))
   bp.ri <- rep(0,length(RealInt))
   for(i in 1:length(bp.ri)) bp.ri[i] <- bp.mean[b.num[i]]
-  op <- par(mfrow=c(2,1),col.lab="black",col.main="black")
   xax <- seq(1961, 1987, length=103)
-  plot(xax, bcp.ri$posterior.mean, type="l", xlab="Time", ylab="Mean", main="Posterior Means")
-  lines(xax, bp.ri, col="blue")
-  points(RealInt)
-  plot(xax, bcp.ri$posterior.prob, type="l", ylim=c(0,1), xlab="Time", ylab="Posterior Probability", main="Posterior Probability of a Change")
+  op<-par(mfrow=c(2,1),col.lab="black",col.main="black")
+  op2 <- par(mar=c(0,4,4,2),xaxt="n", cex.axis=0.75)
+  plot(1:length(bcp.ri$data), bcp.ri$data, col="grey", pch=20, xlab="", ylab="Posterior Mean", main="U.S. Ex-Post Interest Rate")
+  lines(bcp.ri$posterior.mean, lwd=2)
+  lines(bp.ri, col="blue")
+  par(op2)
+  op3 <- par(mar=c(5,4,0,2), xaxt="s", cex.axis=0.75)
+  plot(xax, bcp.ri$posterior.prob, yaxt="n", type="l", ylim=c(0,1), xlab="Year", ylab="Posterior Probability", main="")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
+  axis(2, yaxp=c(0, 0.9, 3))
+  par(op3)
   par(op)
   } else {
-  cat("strucchange is not loaded")
+    cat("strucchange is not loaded")
   }
   
 }

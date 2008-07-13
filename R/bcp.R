@@ -1,5 +1,82 @@
+"worker.bcp" <- function(mcmc, x, w0, p0, burnin, return.mcmc) {
+
+  require(bcp)
+  return(bcp(x, w0, p0, burnin, mcmc, return.mcmc))
+
+}
+
 "bcp" <-
-function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
+function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE, nwssleigh = NULL) {
+
+  if (!is.null(nwssleigh)) {
+
+    if (!require(nws)) stop("The nws package is not available.")
+
+    numworkers <- length(nwssleigh@nodeList)
+    
+    if (numworkers < 2) stop("Parallel computing requires at least 2 workers.")
+    
+    mcmc.w <- rep(floor(mcmc/numworkers), numworkers)
+    mcmc.w[1] <- mcmc - sum(mcmc.w[2:numworkers])
+
+    ans <- eachElem(nwssleigh, worker.bcp,
+                    elementArgs=mcmc.w,
+                    fixedArgs=list(x, w0, p0, burnin, return.mcmc))
+
+    # Here, process the result and return! 
+
+    gmeans <- ans[[1]]$posterior.mean
+    gprob <- ans[[1]]$posterior.prob
+    gvar <- ans[[1]]$posterior.var * (mcmc.w[1]-1)
+    for (i in 2:numworkers) {
+      gmeans <- gmeans + ans[[i]]$posterior.mean
+      gprob <- gprob + ans[[i]]$posterior.prob
+      gvar <- gvar + ans[[i]]$posterior.var * (mcmc.w[i]-1)
+    }
+    gmeans <- gmeans / numworkers
+    gprob <- gprob / numworkers
+    # gvar at this point is the within-group SS (WSS)
+    bss <- mcmc.w[1] * (ans[[1]]$posterior.mean - gmeans)^2
+    for (i in 2:numworkers) {
+      bss <- bss + mcmc.w[i] * (ans[[i]]$posterior.mean - gmeans)^2
+    }
+    gvar <- gvar + bss
+    gvar <- gvar / (mcmc-1)
+
+    gbcp <- ans[[1]]
+    gbcp$posterior.mean <- gmeans
+    gbcp$posterior.prob <- gprob
+    gbcp$posterior.var <- gvar
+    gbcp$mcmc <- mcmc
+    gbcp$burnin <- burnin * numworkers
+    bblocks <- gbcp$blocks[1:burnin]
+    allblocks <- gbcp$blocks[(burnin+1):length(gbcp$blocks)]
+    for (i in 2:numworkers) {
+      bblocks <- c(bblocks, ans[[i]]$blocks[1:burnin])
+      allblocks <- c(allblocks, ans[[i]]$blocks[(burnin+1):length(ans[[i]]$blocks)])
+    }
+    gbcp$blocks <- c(bblocks, allblocks)
+    if (return.mcmc) {
+      lastpos <- mcmc.w[1] + burnin
+      mcmc.mburn <- gbcp$mcmc.means[1:burnin,]
+      mcmc.means <- gbcp$mcmc.means[(burnin+1):lastpos,]
+      mcmc.rburn <- gbcp$mcmc.rhos[1:burnin,]
+      mcmc.rhos <- gbcp$mcmc.rhos[(burnin+1):lastpos,]
+      for (i in 2:numworkers) {
+        lastpos <- mcmc.w[i] + burnin
+        mcmc.mburn <- rbind(mcmc.mburn, ans[[i]]$mcmc.means[1:burnin,])
+        mcmc.means <- rbind(mcmc.means,
+                            ans[[i]]$mcmc.means[(burnin+1):lastpos,])
+        mcmc.rburn <- rbind(mcmc.rburn, ans[[i]]$mcmc.rhos[1:burnin,])
+        mcmc.rhos <- rbind(mcmc.rhos,
+                            ans[[i]]$mcmc.rhos[(burnin+1):lastpos,])
+      }
+      gbcp$mcmc.means <- rbind(mcmc.mburn, mcmc.means)
+    }
+
+    return(gbcp)
+
+  } else {
 
 	# INITIALIZATION
 	n <- length(x)		 # n = sample size.             
@@ -20,7 +97,7 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
 	pvar <- rep(0,n)
 	pchange <- rep(0,n)
 	
-	# LOAD C SCRIPT 
+	# Do the work in C: 
 	out <- .C("Cbcp", 
 		PACKAGE="bcp", 
 		data = as.double(x), 
@@ -53,6 +130,8 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
 		rhos <- NA
 		results <- NA
 	}
+        posterior.prob <- out$pchange
+        posterior.prob[length(x)] <- NA
 	
 	# RETURN RESULTS
 	y <- (list(data=x,
@@ -62,7 +141,7 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
 		blocks=out$blocks,
 		posterior.mean=out$pmean,
 		posterior.var=out$pvar,
-		posterior.prob=out$pchange,
+		posterior.prob=posterior.prob,
 		burnin=burnin,  
 		mcmc=mcmc,     
 		p0=p0,		 
@@ -70,4 +149,7 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
                 )
 	class(y) <- "bcp"
 	return(y)
+
+  } # End the single processing.
+
 }

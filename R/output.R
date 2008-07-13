@@ -20,6 +20,11 @@ summary.bcp <-
 	cat("\n")
 }
 	
+interval.prob <- function(object, start, end) {
+  if (!object$return.mcmc) stop("bcp must be run with return.mcmc=TRUE")
+  return(sum(apply(object$mcmc.rhos[-c(1:object$burnin),start:end], 1, sum)>0) / object$mcmc)
+}
+
 
 ##############################################################################
 print.bcp <- function(x, digits = max(3, .Options$digits - 3), ...) {
