@@ -6,7 +6,7 @@
 \title{The probability of a change point in a specified interval.}
 
 \description{
-From a \code{bcp} object (with \code{return.mcmc=TRUE}), \code{interval.prob()} calculates the probability of a change point in a specified interval.} 
+From a \code{bcp} object (with \code{return.mcmc=TRUE}), \code{interval.prob()} calculates the probability of a change point in a specified interval. 
 }
 
 \usage{

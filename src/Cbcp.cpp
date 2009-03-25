@@ -1,8 +1,8 @@
 /*
-bigmemory: an R package for performing a Bayesian analysis
+bcp: an R package for performing a Bayesian analysis
 of change point problems.
 
-Copyright (C) 2007, 2007, 2008 Chandra Erdman and John W. Emerson
+Copyright (C) 2007, 2008 Chandra Erdman and John W. Emerson
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
