@@ -15,9 +15,9 @@ A quarterly time series from 1961(1) to 1986(3).
 \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.}
 
 \references{
-Bai J., Perron P. (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. url: \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
+J. Bai and P. Perron (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
 
-Achim Zeileis, Friedrich Leisch, Bruce Hansen, Kurt Hornik, Christian Kleiber (2006), \emph{The strucchange Package, version 1.3-1}, CRAN: The Comprehensive R Network. 
+Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1--38. \url{http://www.jstatsoft.org/v07/i02/}. 
 }
 
 \examples{
