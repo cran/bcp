@@ -38,12 +38,14 @@ Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), struccha
   xax <- seq(1961, 1987, length=103)
   op<-par(mfrow=c(2,1),col.lab="black",col.main="black")
   op2 <- par(mar=c(0,4,4,2),xaxt="n", cex.axis=0.75)
-  plot(1:length(bcp.ri$data), bcp.ri$data, col="grey", pch=20, xlab="", ylab="Posterior Mean", main="U.S. Ex-Post Interest Rate")
+  plot(1:length(bcp.ri$data), bcp.ri$data, col="grey", pch=20,
+       xlab="", ylab="Posterior Mean", main="U.S. Ex-Post Interest Rate")
   lines(bcp.ri$posterior.mean, lwd=2)
   lines(bp.ri, col="blue")
   par(op2)
   op3 <- par(mar=c(5,4,0,2), xaxt="s", cex.axis=0.75)
-  plot(xax, bcp.ri$posterior.prob, yaxt="n", type="l", ylim=c(0,1), xlab="Year", ylab="Posterior Probability", main="")
+  plot(xax, bcp.ri$posterior.prob, yaxt="n", type="l", ylim=c(0,1),
+       xlab="Year", ylab="Posterior Probability", main="")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   axis(2, yaxp=c(0, 0.9, 3))
   par(op3)

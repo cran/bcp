@@ -44,7 +44,8 @@ The function returns the posterior probability of a change point for each positi
        M <- bcp.0$burnin + bcp.0$mcmc
        bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
        summary(bcp.mcmc)
-       heidel.diag(bcp.mcmc) # an example convergence diagnostic from the coda package.
+       heidel.diag(bcp.mcmc) # an example convergence diagnostic
+                             # from the coda package.
    }
 
 }

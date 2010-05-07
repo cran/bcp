@@ -1,22 +1,23 @@
-% --- Source file: bcp.Rd ---
 \name{bcp}
-
 \alias{bcp}
-
-%- Also NEED an '\alias' for EACH other topic documented here.
-
 \title{A Package for Performing a Bayesian Analysis of Change Point Problems}
 
 \description{
- \code{bcp()} implements the Barry and Hartigan (1993) product partition model for the standard change point problem using Markov Chain Monte Carlo. Versions < 2.0 are quadratic in speed, and perform the default 550 iterations in approximately 0.75 seconds for a sequence of length 100.  Versions => 2.0 are linear in speed and partition a sequence of length 10,000 in approximately 45 seconds (compared with 45 minutes for versions < 2.0).  These times were computed on a PC with Windows XP, a Pentium D Processor (2.99 GHz) and 3.50GB of RAM. 
+ \code{bcp()} implements the Barry and Hartigan (1993) product partition model for
+the standard change point problem using Markov Chain Monte Carlo. Versions < 2.0
+are quadratic in speed, and perform the default 550 iterations in approximately
+0.75 seconds for a sequence of length 100.  Versions >= 2.0 are linear in speed
+and partition a sequence of length 10,000 in approximately 45 seconds (compared
+with 45 minutes for versions < 2.0).  These times were computed on a PC with
+Windows XP, a Pentium D Processor (2.99 GHz) and 3.50GB of RAM. Versions < 2.2.0
+used NetWorkSpaces for optional parallel mcmc.  Versions >= 2.2.0 replace this with
+the more flexible and friendly package \pkg{foreach}.
 }
 
 \usage{
  bcp(x, w0 = 0.2, p0 = 0.2, burnin = 50, mcmc = 500,
-     return.mcmc = FALSE, nwssleigh = NULL)
+     return.mcmc = FALSE)
 }
-
-%- maybe also 'usage' for other objects documented here.
 
 \arguments{
   \item{x}{a vector of numerical data. }
@@ -27,28 +28,23 @@
   \item{burnin}{the number of burnin iterations.}
   \item{mcmc}{the number of iterations after burnin. }
   \item{return.mcmc}{if \code{return.mcmc=TRUE} the posterior means and the partitions after each iteration are returned.}
-  \item{nwssleigh}{the NWS sleigh (see details).}
 }
 
 \details{
 This algorithm is used when there exists an unknown partition of a sequence into 
 contiguous blocks such that the mean is constant within blocks.
 
-When NetWorkSpaces (package \code{nws}) is used for parallel Markov chains, there is network
+If there is a registered parallel backend (probably via \pkg{doSNOW},
+\pkg{doMC}, or \pkg{doMPI}) then parallel Markov chains will be run on
+the available resources.  There is communication
 overhead as well as the overhead associated with burning in each chain.  A special note
 is needed about the values returned (with respect to \code{blocks} and, if 
 \code{return.mcmc=TRUE}, about \code{mcmc.means} and \code{mcmc.rhos}): the burnins
-are collected at the beginning of the vector (or matrix, as the case may be) of results,
+are collected at the beginning of the matrix of results,
 followed by blocks of the mcmc results.  So, for example, positions \code{1:burnin}
 contain the burnins from the first worker.  And if there are \code{k} workers, then
 positions \code{k*burnin+1} through \code{k*burnin+mcmc/k} will contain the results
 of the first chain (ideally \code{mcmc} should be divisible by \code{k}).  As a result, convergence diagnostics (for example, the \code{heidel.diag()} function of the coda package) should be applied to parallel \code{bcp} objects with care.
-
-
-If you are unfamiliar with NetWorkSpaces, it requires both the \code{nws} package
-(available from CRAN) and a NetWorkSpaces server (freely available but somewhat more
-work to get started).  We will keep a page updated with links and information to help
-you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
 }
 
 \value{
@@ -69,9 +65,13 @@ you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
   The generic accessor functions \code{data}, \code{blocks}, and \code{posterior.mean}, \code{posterior.prob}, \code{burnin}, \code{mcmc}, \code{w0}, and \code{p0} extract various useful components of the list returned by \code{bcp()}.  The functions \code{summary.bcp()}, \code{print.bcp()}, and \code{plot.bcp()} are used to obtain summaries of the results.
 }
 
-\author{Chandra Erdman and John W. Emerson}
+\author{
+Chandra Erdman and John W. Emerson
 
-\note{The vector of data must contain no missing or \code{NA} values.  The user may set \code{.Random.seed} to control the MCMC if desired.}
+Maintainer: John W. Emerson <john.emerson@yale.edu>
+}
+
+\note{The vector of data must contain no missing or \code{NA} values.  The user may set \code{.Random.seed} to control the MCMC.}
 
 \seealso{\code{\link{plot.bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for summaries of the results.}
 
@@ -81,17 +81,6 @@ you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
   testdata <- c(rnorm(50), rnorm(50, 5, 1), rnorm(50))
   bcp.0 <- bcp(testdata)
   plot.bcp(bcp.0)
-
-  \dontrun{
-    ##### An example using NetWorkSpaces for parallel MCMC; note that
-    ##### you must have package nws as well as an NWS server available,
-    ##### specified in the nwsHost argument (see Details, above).
-    if (require(nws)) {
-      s <- sleigh(workerCount=4, nwsHost='hostname.XXX.YYY.ZZZ')
-      bcp.parallel <- bcp(testdata, nwssleigh=s)
-      stopSleigh(s)
-    }
-  }
   
   ##### Coriell chromosome 11 #####
   data(coriell)
@@ -99,6 +88,24 @@ you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
   bcp.11 <- bcp(chrom11)
   plot.bcp(bcp.11)
   
+  \dontrun{
+    ##### An example using foreach for parallel MCMC; note that
+    ##### you must register a parallel backend using doSNOW, doMC,
+    ##### or doMPI.  This example would use doSNOW.
+
+    library(doSNOW)
+    cl <- makeCluster(3, type="SOCK")
+    registerDoSNOW(cl)
+
+    # This probably takes around 3.5 seconds:
+    system.time(bcp.par <- bcp(chrom11, mcmc=20000))
+    stopCluster(cl)
+
+    # This sequential run is slower:
+    registerDoSEQ()  # The default behavior
+    system.time(bcp.seq <- bcp(chrom11, mcmc=20000))
+  }
+
   # to see bcp and Circular Binary Segmentation results run:
   if(require("DNAcopy")) {
   n <- length(chrom11)
@@ -106,13 +113,18 @@ you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
   cbs.ests <- rep(unlist(cbs$output[6]), unlist(cbs$output[5]))
   op <- par(mfrow=c(2,1),col.lab="black",col.main="black")
   op2 <- par(mar=c(0,4,4,2),xaxt="n", cex.axis=0.75)
-  plot(1:n, bcp.11$data, col="grey", pch=20, xlab="Location", ylab="Posterior Mean", main="Posterior Means and Probabilities of a Change")
+  plot(1:n, bcp.11$data, col="grey", pch=20, xlab="Location",
+       ylab="Posterior Mean",
+       main="Posterior Means and Probabilities of a Change")
   lines(cbs.ests, col="red")
   lines(bcp.11$posterior.mean, lwd=2)
   par(op2)
   op3 <- par(mar=c(5,4,0,2), xaxt="s", cex.axis=0.75)
-  plot(1:n, bcp.11$posterior.prob, type="l", ylim=c(0,1), xlab="Location", ylab="Posterior Probability", main="")
-  for(i in 1:(dim(cbs$output)[1]-1)) abline(v=cbs$output$loc.end[i], col="red")
+  plot(1:n, bcp.11$posterior.prob, type="l", ylim=c(0,1),
+       xlab="Location", ylab="Posterior Probability", main="")
+  for(i in 1:(dim(cbs$output)[1]-1)) {
+    abline(v=cbs$output$loc.end[i], col="red")
+  }
   par(op3)
   par(op)
   } else {
@@ -136,12 +148,14 @@ you get started: \url{http://www.stat.yale.edu/~jay/nws/}.
   xax <- seq(1961, 1987, length=103)
   op<-par(mfrow=c(2,1),col.lab="black",col.main="black")
   op2 <- par(mar=c(0,4,4,2),xaxt="n", cex.axis=0.75)
-  plot(1:length(bcp.ri$data), bcp.ri$data, col="grey", pch=20, xlab="", ylab="Posterior Mean", main="U.S. Ex-Post Interest Rate")
+  plot(1:length(bcp.ri$data), bcp.ri$data, col="grey", pch=20,
+       xlab="", ylab="Posterior Mean", main="U.S. Ex-Post Interest Rate")
   lines(bcp.ri$posterior.mean, lwd=2)
   lines(bp.ri, col="blue")
   par(op2)
   op3 <- par(mar=c(5,4,0,2), xaxt="s", cex.axis=0.75)
-  plot(xax, bcp.ri$posterior.prob, yaxt="n", type="l", ylim=c(0,1), xlab="Year", ylab="Posterior Probability", main="")
+  plot(xax, bcp.ri$posterior.prob, yaxt="n", type="l", ylim=c(0,1),
+       xlab="Year", ylab="Posterior Probability", main="")
   for(i in 1:length(bp.ri)) abline(v=xax[bp[i]], col="blue")
   axis(2, yaxp=c(0, 0.9, 3))
   par(op3)
