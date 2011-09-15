@@ -3,6 +3,7 @@ import(methods, graphics, stats)
 export(bcp,
        summary.bcp,
        plot.bcp,
+       plot.bcp.legacy,
        print.bcp,
        fitted.bcp,
        residuals.bcp,
@@ -13,4 +14,6 @@ S3method(plot, bcp)
 S3method(print, bcp)
 S3method(fitted, bcp)
 S3method(residuals, bcp)
+
+useDynLib(bcp)
 

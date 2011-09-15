@@ -3,10 +3,11 @@
 
 \alias{interval.prob}
 
-\title{The probability of a change point in a specified interval.}
+\title{Estimate the probability of a change point in a specified interval.}
 
 \description{
-From a \code{bcp} object (with \code{return.mcmc=TRUE}), \code{interval.prob()} calculates the probability of a change point in a specified interval. 
+The function \code{interval.prob()} estimates the probability of at least one
+change point in the specified interval; it may only be used when \code{return.mcmc=TRUE}.
 }
 
 \usage{
@@ -21,7 +22,7 @@ From a \code{bcp} object (with \code{return.mcmc=TRUE}), \code{interval.prob()} 
 }
 
 \details{
-The function returns the posterior probability of at least one change point in the specified interval.
+The function returns an estimate of the posterior probability of at least one change point in the specified interval.
 }
 
 \author{Chandra Erdman and John W. Emerson}
@@ -38,7 +39,7 @@ The function returns the posterior probability of at least one change point in t
   bcp.0 <- bcp(testdata, return.mcmc=TRUE)
   plot.bcp(bcp.0)
   interval.prob(bcp.0, 45, 55)
-  
+
 }
 
 \keyword{datasets}

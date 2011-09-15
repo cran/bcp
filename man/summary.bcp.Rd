@@ -1,27 +1,30 @@
 % --- Source file: summary.bcp.Rd ---
 \name{summary.bcp}
-
+\alias{print.bcp}
 \alias{summary.bcp}
 
-\title{Summarizing Bayesian change point results}
+\title{Summarizing Bayesian change point analysis results}
 
 \description{
- summary method for class \code{bcp}.
+ Summary and print methods for class \code{bcp}.
 }
 
 \usage{
  summary.bcp(object, digits = max(3, .Options$digits - 3), ...)
+ print.bcp(x, digits = max(3, .Options$digits - 3), ...)
 }
 
 \arguments{
+  \item{x}{the result of a call to \code{bcp()}.}
   \item{object}{the result of a call to \code{bcp()}.}
   \item{digits}{the number of digits displayed in the summary statistics.}
   \item{...}{additional arguments.}
-  
 }
 
+\value{The matrix of results is returned invisibly.}
+
 \details{
-The function returns the posterior probability of a change point for each position, the posterior means and standard deviations. These results are modeled after the summary method of the coda package (Plummer \emph{et al.}, 2006). If \code{return.mcmc=TRUE} (i.e., if full MCMC results are returned), \code{bcp} objects can be converted into \code{mcmc} objects to view \code{mcmc} summaries -- see examples below.
+The functions print (and return invisibly) the estimated posterior probability of a change point for each position and the estimated posterior means. These results are modeled after the summary method of the \code{coda} package (Plummer \emph{et al.}, 2006). If \code{return.mcmc=TRUE} (i.e., if full MCMC results are returned), \code{bcp} objects can be converted into \code{mcmc} objects to view \code{mcmc} summaries -- see examples below.
 }
 
 \author{Chandra Erdman and John W. Emerson}
@@ -38,16 +41,13 @@ The function returns the posterior probability of a change point for each positi
   plot.bcp(bcp.0)
   
   ##### An MCMC summary from the ``coda'' package #####
-   if(require("coda")) {
-       bcp.0 <- bcp(testdata, return.mcmc=TRUE)
-       BURNIN <- bcp.0$burnin
-       M <- bcp.0$burnin + bcp.0$mcmc
-       bcp.mcmc <- as.mcmc(bcp.0$mcmc.means)
-       summary(bcp.mcmc)
-       heidel.diag(bcp.mcmc) # an example convergence diagnostic
-                             # from the coda package.
-   }
-
+  if (require("coda")) {
+    bcp.0 <- bcp(testdata, return.mcmc=TRUE)
+    bcp.mcmc <- as.mcmc(t(bcp.0$mcmc.means))
+    summary(bcp.mcmc)
+    heidel.diag(bcp.mcmc) # an example convergence diagnostic
+                          # from the coda package.
+  }
 }
 
 \references{

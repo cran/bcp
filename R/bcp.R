@@ -1,112 +1,108 @@
-"bcp" <-
-function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
+#
+# bcp: an R package for performing a Bayesian analysis
+# of change point problems.
+#
+# Copyright (C) 2011 Chandra Erdman and John W. Emerson
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, a copy is available at
+# http://www.r-project.org/Licenses/
+#
+#-------------------
+# FILE: bcp.R
 
-  require(foreach)
-  if (is.null(getDoParName())) {
-    registerDoSEQ() # A little hack to avoid the foreach warning 1st time.
-  }
+"bcp" <- function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
 
-############################ HERE IS THE WORKER FUNCTION:
+######################################################
+########################### BEGIN THE WORKER FUNCTION:
+######################################################
 
 "worker.bcp" <- function(mcmc, x, w0, p0, burnin, return.mcmc) {
 
   require(bcp)
 
   # INITIALIZATION
-  n <- length(x)		 # n = sample size.             
-  M <- burnin + mcmc	            
-  rho <- rep(0,n)		 # rho = indicator specifying partition boundaries.
-  rho[n] <- 1
-  blocks <- rep(0,M)	 # blocks = vector of number of blocks after each iteration.
-  if (return.mcmc){
-    rhos <- matrix(0,M,n)	# rhos = matrix of rho[m] for m in 1:M.
-    results <- matrix(0,M,n)  # results = matrix of posterior means.
-    mcmcreturn <- 1		# for use in C.
-  } else {
-    rhos <- 0
-    results <- 0
-    mcmcreturn <- 0
+  if (is.data.frame(x)) x <- matrix(as.double(x), nrow=nrow(x), ncol=ncol(x))
+  if (is.vector(x)) x <- matrix(as.double(x), ncol=1)
+  if (!is.matrix(x)) stop("x must be a vector, matrix or a data frame")
+  if (nrow(x)==1) {
+    warning("coercing data to a single series")
+    x <- matrix(as.vector(x), ncol=1)
   }
-  pmean <- rep(0,n)
-  pvar <- rep(0,n)
-  pchange <- rep(0,n)
-	
+
   # Do the work in C:
-  out <- .C("Cbcp", 
+  out <- .Call("rcpp_bcp", 
 		PACKAGE="bcp", 
-		data = as.double(x), 
-		mcmcreturn = as.integer(mcmcreturn),
-		n = as.integer(n), 
+		data = x,
+		mcmcreturn = as.integer(return.mcmc),
 		burnin = as.integer(burnin), 
 		mcmc = as.integer(mcmc),     
-		rho = as.integer(rho),
-		rhos = as.integer(rhos),
-		blocks = as.integer(blocks),
-		results = as.double(results),
-        	a = as.double(p0),
-		c = as.double(w0),
-		pmean = as.double(pmean),
-		pvar = as.double(pvar),
-		pchange = as.double(pchange)
-      	)
+		a = as.double(p0),
+		c = as.double(w0)
+      	      )
 
-  if (return.mcmc) {
-    # STUFF LONG VECTORS FROM C INTO MATRICES IN R
-    start <- rep(0,M)
-    end <- rep(0,M)
-    for (m in 1:M) {
-      start[m] <- (m-1)*n + 1
-      end[m] <- m*n
-      rhos[m,] <- out$rhos[start[m]:end[m]]
-      results[m,] <- out$results[start[m]:end[m]]
-    }
-  } else {
-    rhos <- NA
-    results <- NA
-  }
-  posterior.prob <- out$pchange
-  posterior.prob[length(x)] <- NA
+  out$pchange[nrow(x)] <- NA     # Fix up the last position, always NA
 	
   # RETURN RESULTS
   y <- list(data=x,
 		return.mcmc=return.mcmc,
-		mcmc.means=results,
-		mcmc.rhos=rhos,
+		mcmc.means=out$mcmc.means,
+		mcmc.rhos=out$mcmc.rhos,
 		blocks=out$blocks,
 		posterior.mean=out$pmean,
 		posterior.var=out$pvar,
-		posterior.prob=posterior.prob,
-		burnin=burnin,  
+		posterior.prob=out$pchange,
+		burnin=burnin,            
 		mcmc=mcmc,     
 		p0=p0,		 
-            w0=w0)		 
+		w0=w0)		 
   class(y) <- "bcp"
 
   return(y)
 
 }
 
+###################################################
 ########################### END THE WORKER FUNCTION
 ########################### BEGIN THE MAIN SECTION:
+###################################################
 
-  numworkers <- 1
-  if (require(foreach)) numworkers <- getDoParWorkers()
+# Function header and foreach setup, from above:
+#
+#"bcp" <- function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
+#
+
+  require(foreach)
+  if (is.null(getDoParName())) {
+    registerDoSEQ() # A little hack to avoid the foreach warning 1st time.
+  }
 
   # Divy up the work across available workers:
+  numworkers <- getDoParWorkers()
   mcmc.w <- rep(floor(mcmc/numworkers), numworkers)
   if (numworkers>1) { # Give the first worker a little extra if needed.
     mcmc.w[1] <- mcmc - sum(mcmc.w[2:numworkers])
   }
 
   ######################################################
-  # Here's the call to do the work, perhaps in parallel:
+  # The call to do the work, perhaps in parallel:
 
   ans <- foreach(mcmc=mcmc.w) %dopar% {
     worker.bcp(mcmc, x=x, w0=w0, p0=p0, burnin=burnin, return.mcmc=return.mcmc)
   }
 
   ######################################
-  # Here, process the result and return. 
+  # Process the result and return. 
 
   gmeans <- ans[[1]]$posterior.mean
   gprob <- ans[[1]]$posterior.prob
@@ -146,24 +142,61 @@ function(x, w0=0.2, p0=0.2, burnin=50, mcmc=500, return.mcmc=FALSE) {
     }
   }
   gbcp$blocks <- c(bblocks, allblocks)
-  if (return.mcmc) {
+
+  if (return.mcmc) {                ### Non-trivial because of multivariate as well
+                                    ### as possible multiple workers...
     lastpos <- mcmc.w[1] + burnin
-    mcmc.mburn <- gbcp$mcmc.means[1:burnin,]
-    mcmc.means <- gbcp$mcmc.means[(burnin+1):lastpos,]
-    mcmc.rburn <- gbcp$mcmc.rhos[1:burnin,]
-    mcmc.rhos <- gbcp$mcmc.rhos[(burnin+1):lastpos,]
-    if (numworkers>1) {
-      for (i in 2:numworkers) {
-        lastpos <- mcmc.w[i] + burnin
-        mcmc.mburn <- rbind(mcmc.mburn, ans[[i]]$mcmc.means[1:burnin,])
-        mcmc.means <- rbind(mcmc.means,
-                            ans[[i]]$mcmc.means[(burnin+1):lastpos,])
-        mcmc.rburn <- rbind(mcmc.rburn, ans[[i]]$mcmc.rhos[1:burnin,])
-        mcmc.rhos <- rbind(mcmc.rhos,
-                            ans[[i]]$mcmc.rhos[(burnin+1):lastpos,])
+
+    # Handle the rhos, burnin and real mcmc partition states:
+    mcmc.rburn <- gbcp$mcmc.rhos[,1:burnin]
+    mcmc.rhos <- gbcp$mcmc.rhos[,(burnin+1):lastpos]
+
+    nsamples <- ncol(gbcp$data)
+    n <- nrow(gbcp$data)
+
+    # Ditto for the results, but possibly multivariate:
+    temp <- matrix(gbcp$mcmc.means[,1], nrow=n, ncol=lastpos)
+    mcmc.mburn <- temp[,1:burnin]
+    mcmc.means <- temp[,(burnin+1):lastpos]
+    if (nsamples>1) {
+      mcmc.mburn <- list(mcmc.mburn)
+      mcmc.means <- list(mcmc.means)
+      for (i in 2:nsamples) {
+        temp <- matrix(gbcp$mcmc.means[,i], nrow=n, ncol=lastpos)
+        mcmc.mburn[[i]] <- temp[,1:burnin]
+        mcmc.means[[i]] <- temp[,(burnin+1):lastpos]
       }
     }
-    gbcp$mcmc.means <- rbind(mcmc.mburn, mcmc.means)
+
+    if (numworkers>1) {
+      for (j in 2:numworkers) {
+        lastpos <- mcmc.w[j] + burnin
+        temp <- matrix(ans[[j]]$mcmc.means[,1], nrow=n, ncol=lastpos)
+        # if mcmc.mburn is a matrix, simply cbind stuff from the workers
+        if (nsamples==1) {
+          mcmc.mburn <- cbind(mcmc.mburn, temp[,1:burnin])
+          mcmc.means <- cbind(mcmc.means, temp[,(burnin+1):lastpos])
+        } else {
+          # if mcmc.mburn is a list of matrices, do the work across samples,
+          # being very careful of the list structure: a list with matrices for
+          # each data series, whereas we're unpacking the worker results from
+          # a worker list, as well... be very careful!
+          mcmc.mburn[[1]] <- cbind(mcmc.mburn[[1]], temp[,1:burnin])
+          mcmc.means[[1]] <- cbind(mcmc.means[[1]], temp[,(burnin+1):lastpos])
+          for (i in 2:nsamples) {
+            temp <- matrix(ans[[j]]$mcmc.means[,i], nrow=n, ncol=lastpos)
+            mcmc.mburn[[i]] <- cbind(mcmc.mburn[[i]], temp[,1:burnin])
+            mcmc.means[[i]] <- cbind(mcmc.means[[i]], temp[,(burnin+1):lastpos])
+          }
+        }
+      }
+    }
+
+    if (nsamples==1) {
+      gbcp$mcmc.means <- cbind(mcmc.mburn, mcmc.means)
+    } else {
+      gbcp$mcmc.means <- list(burnins=mcmc.mburn, means=mcmc.means)
+    }
   }
 
   return(gbcp)
