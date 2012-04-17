@@ -10,7 +10,7 @@
 }
 
 \usage{
- plot.bcp(x, separated = FALSE, 
+ \method{plot}{bcp}(x, separated = FALSE, 
    outer.margins = list(left=unit(4, "lines"),
      bottom=unit(3, "lines"),
      right=unit(2, "lines"), 
@@ -51,10 +51,10 @@ Posterior Probability of a Change: location in the sequence versus the relative 
 
 \author{Chandra Erdman and John W. Emerson}
 
-\note{The original plot method for \code{bcp} from package versions prior to 3.0.0 is available in \code{\link{plot.bcp.legacy}}; this plot method uses \code{base} graphics.}
+\note{The original plot method for \code{bcp} from package versions prior to 3.0.0 is available in \code{\link{legacyplot}}; this plot method uses \code{base} graphics.}
 
 
-\seealso{\code{\link{plot.bcp.legacy}}, \code{\link{bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for complete results and summary statistics.}
+\seealso{\code{\link{legacyplot}}, \code{\link{bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for complete results and summary statistics.}
 
 \examples{
 

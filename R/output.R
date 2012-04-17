@@ -37,7 +37,7 @@ interval.prob <- function(object, start, end) {
           object$mcmc)
 }
 
-plot.bcp.legacy <- function(x, ...) { 	
+legacyplot <- function(x, ...) { 	
   if (is.matrix(x$data) && ncol(x$data)>1)
     stop("Legacy bcp plot invalid for multivariate bcp object.")
   posterior.prob <- x$posterior.prob
@@ -92,8 +92,8 @@ plot.bcp <- function(x, separated = FALSE,
   if (is.null(main)) main <- "Posterior Means and Probabilities of a Change"
 
   vp.main <- viewport(x=outer.margins$left, y=outer.margins$bottom,
-                      w=unit(1, "npc")-outer.margins$right-outer.margins$left,
-                      h=unit(1, "npc")-outer.margins$top-outer.margins$bottom,
+                      width=unit(1, "npc")-outer.margins$right-outer.margins$left,
+                      height=unit(1, "npc")-outer.margins$top-outer.margins$bottom,
                       just=thisjust, name="main", clip="off")
   pushViewport(vp.main)
   grid.rect()
@@ -103,7 +103,7 @@ plot.bcp <- function(x, separated = FALSE,
   # Upper plot
   if (!separated) {
     pushViewport(viewport(x=unit(0, "npc"), y=lower.area,
-                          w=unit(1, "npc"), h=unit(1, "npc") - lower.area,
+                          width=unit(1, "npc"), height=unit(1, "npc") - lower.area,
                           just=thisjust, name="upper", clip="off",
                           default.units="native",
                           xscale=c(-1, n+2),
@@ -120,15 +120,15 @@ plot.bcp <- function(x, separated = FALSE,
     popViewport(1)
   } else {
     pushViewport(viewport(x=unit(0, "npc"), y=lower.area,
-                          w=unit(1, "npc"), h=unit(1, "npc") - lower.area,
+                          width=unit(1, "npc"), height=unit(1, "npc") - lower.area,
                           just=thisjust, name="upper", clip="off"))
     grid.text("Posterior Means", unit(-3, "lines"), 0.5, rot=90)
     yloc <- FALSE
     for (i in 1:m) {
       pushViewport(viewport(x=unit(0, "npc"),
                             y=unit((i-1)/m, "npc"),
-                            w=unit(1, "npc"),
-                            h=unit(1/m, "npc"),
+                            width=unit(1, "npc"),
+                            height=unit(1/m, "npc"),
                             just=thisjust, name="upper", clip="off",
                             default.units="native",
                             xscale=c(-1, n+2),
@@ -147,7 +147,7 @@ plot.bcp <- function(x, separated = FALSE,
 
   # Lower plot
   pushViewport(viewport(x=unit(0, "npc"), y=unit(0, "npc"),
-                        w=unit(1, "npc"), h=lower.area,
+                        width=unit(1, "npc"), height=lower.area,
                         just=thisjust, name="lower", clip="off",
                         default.units="native",
                         xscale=c(-1, n+2),

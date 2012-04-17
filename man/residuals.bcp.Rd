@@ -9,7 +9,7 @@
 }
 
 \usage{
- residuals.bcp(object, ...)
+ \method{residuals}{bcp}(object, ...)
 }
 
 \arguments{

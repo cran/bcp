@@ -9,7 +9,7 @@
 }
 
 \usage{
- fitted.bcp(object, ...)
+ \method{fitted}{bcp}(object, ...)
 }
 
 \arguments{

@@ -3,7 +3,7 @@ import(methods, graphics, stats)
 export(bcp,
        summary.bcp,
        plot.bcp,
-       plot.bcp.legacy,
+       legacyplot,
        print.bcp,
        fitted.bcp,
        residuals.bcp,

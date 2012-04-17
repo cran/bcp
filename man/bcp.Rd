@@ -48,7 +48,7 @@ probability of a change point at any given location are provided, however.
 The user may set \code{.Random.seed} to control the MCMC iterations.
 
 The functions \code{\link{summary.bcp}}, \code{\link{print.bcp}}, and \code{\link{plot.bcp}} are
-used to obtain summaries of the results; \code{\link{plot.bcp.legacy}} is included
+used to obtain summaries of the results; \code{\link{legacyplot}} is included
 from package versions prior to 3.0.0 and will only work for univariate change
 point analyses.
 
@@ -131,7 +131,7 @@ Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), struccha
   testdata <- c(rnorm(50), rnorm(50, 5, 1), rnorm(50))
   bcp.0 <- bcp(testdata)
   plot.bcp(bcp.0)
-  plot.bcp.legacy(bcp.0)
+  legacyplot(bcp.0)
   
   ##### Coriell chromosome 11 #####
   data(coriell)

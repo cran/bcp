@@ -1,16 +1,16 @@
 % --- Source file: plot.bcp.legacy.Rd ---
 \name{plot.bcp.legacy}
 
-\alias{plot.bcp.legacy}
+\alias{legacyplot}
 
 \title{Plotting univariate Bayesian change point results}
 
 \description{
-  \code{plot.bcp.legacy()} produces summary plots of the results of \code{bcp()} when used for univariate analysis; it was the default method prior to package version 3.0.0.
+  \code{legacyplot()} produces summary plots of the results of \code{bcp()} when used for univariate analysis; it was the default method prior to package version 3.0.0.
 }
 
 \usage{
- plot.bcp.legacy(x, ...)
+ legacyplot(x, ...)
 }
 
 \arguments{
@@ -19,7 +19,7 @@
 }
 
 \details{
-\code{plot.bcp.legacy()} produces the following plots using \code{base} graphics:
+\code{legacyplot()} produces the following plots using \code{base} graphics:
      
 Posterior Means: location in the sequence versus the posterior mean over the iterations. 
 
@@ -37,7 +37,7 @@ Posterior Probability of a Change: location in the sequence versus the relative 
   ##### A random sample from a few normal distributions #####
   testdata <- c(rnorm(50), rnorm(50, 5, 1), rnorm(50))
   bcp.0 <- bcp(testdata)
-  plot.bcp.legacy(bcp.0)
+  legacyplot(bcp.0)
 
 }
 

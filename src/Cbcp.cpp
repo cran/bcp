@@ -594,7 +594,7 @@ RcppExport SEXP rcpp_bcp(SEXP pdata, SEXP pmcmcreturn, SEXP pburnin,
                       Rf_pbeta((double) xmax, (double) (b+3)/2, (double) (nn-b-4)/2,1, 0) ) /
                     ( exp(Rf_lbeta((double) (b+1)/2, (double) (nn-b-2)/2)) *
                       Rf_pbeta((double) xmax, (double) (b+1)/2, (double) (nn-b-2)/2, 1, 0) );
-    if ((wstar<=0) || (wstar>=1)) printf("%d %d %f %f the sky has fallen!!! %20.15f\n", m, i, W, B, wstar);
+    /* if ((wstar<=0) || (wstar>=1)) printf("%d %d %f %f the sky has fallen!!! %20.15f\n", m, i, W, B, wstar); */
 
     /* MUHATS */
     for (j=0; j<nn; j++) {

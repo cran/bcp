@@ -10,8 +10,8 @@
 }
 
 \usage{
- summary.bcp(object, digits = max(3, .Options$digits - 3), ...)
- print.bcp(x, digits = max(3, .Options$digits - 3), ...)
+ \method{summary}{bcp}(object, digits = max(3, .Options$digits - 3), ...)
+ \method{print}{bcp}(x, digits = max(3, .Options$digits - 3), ...)
 }
 
 \arguments{
