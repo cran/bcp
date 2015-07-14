@@ -1,6 +1,17 @@
 citHeader("To cite bcp in publications use:")
 
 citEntry(entry = "Article",
+  title        = "Bayesian Change Point Analysis of Linear Models on General Graphs",
+  author       = personList(as.person("Xiaofei Wang"),
+                   as.person("John W. Emerson")),
+  journal      = "Working Paper",
+  year         = "2015",
+  textVersion  =
+  paste("Xiaofei Wang and John W. Emerson (2015),",
+        "Bayesian Change Point Analysis of Linear Models on General Graphs, Working Paper.")
+)
+
+citEntry(entry = "Article",
   title        = "{bcp}: An {R} Package for Performing a Bayesian Analysis of Change Point Problems",
   author       = personList(as.person("Chandra Erdman"),
                    as.person("John W. Emerson")),
