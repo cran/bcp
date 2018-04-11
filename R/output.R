@@ -21,6 +21,7 @@
 #' plot(bcp.0, main="Univariate Change Point Example")
 #' 
 #' ##### An MCMC summary from the ``coda'' package #####
+#' \dontrun{
 #' if (require("coda")) {
 #'   bcp.0 <- bcp(testdata, return.mcmc=TRUE)
 #'   bcp.mcmc <- as.mcmc(t(bcp.0$mcmc.means))
@@ -28,7 +29,7 @@
 #'   heidel.diag(bcp.mcmc) # an example convergence diagnostic
 #'   # from the coda package.
 #' }
-#' 
+#' }
 #' @keywords datasets
 #' @export
 summary.bcp <-
