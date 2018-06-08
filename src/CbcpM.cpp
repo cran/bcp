@@ -29,46 +29,46 @@
 /* BEGIN BCP-M stuff */
 
 // b is the number of blocks if position i is not a change point
-double getprob(double B0, double B1, double W0, double W1, 
+double getprob(double B0, double B1, double W0, double W1,
                 int b, Params& params) {
   double xmax1 = (B1*params.w[0]/W1)/(1+(B1*params.w[0]/W1));
   double xmax0 = (B0*params.w[0]/W0)/(1+(B0*params.w[0]/W0));
   double ratio, p;
-  ratio = params.priors[b-1]; 
+  ratio = params.priors[b-1];
   // Rprintf("B0:%.10f, B1:%.10f, W0:%.10f, W1:%.10f, b:%d\n", B0, B1, W0, W1, b);
   if (b >= params.nn - 4 / params.kk) {
     p = 0;
   } else if (B0 == 0) {
     ratio *= exp(Rf_lbeta((double) (params.kk * (b+1) + 1) / 2,
                           (double) ((params.nn2 - b-1) * params.kk - 2) / 2))*
-              Rf_pbeta(xmax1, 
+              Rf_pbeta(xmax1,
                          (double) (params.kk * (b+1) + 1) / 2,
                          (double) ((params.nn2 - b-1) * params.kk - 2) / 2, 1, 0);
     ratio *= exp((params.nn2*params.kk-1) * log(W0)/2 + log((b*params.kk+1)/2)
               - 0.5*((b*params.kk+1)*log(params.w[0])+
-                  ((b+1)*params.kk+1) * log(B1) + 
+                  ((b+1)*params.kk+1) * log(B1) +
                   ((params.nn2-b-1)*params.kk-2)*log(W1)
               ));
     p = ratio/(1+ratio);
   } else {
     ratio *= exp(0.5*(
              ((params.nn2 - b) * params.kk - 2) * log(W0/W1) +
-             (params.kk * b + 1) * log(B0/B1) + 
+             (params.kk * b + 1) * log(B0/B1) +
              params.kk*log(W1/B1)
                    ));
     ratio *= exp(Rf_lbeta((double) (params.kk * (b+1) + 1) / 2,
                           (double) ((params.nn2 - b-1) * params.kk - 2) / 2))*
-             Rf_pbeta(xmax1, 
+             Rf_pbeta(xmax1,
                       (double) (params.kk * (b+1) + 1) / 2,
                       (double) ((params.nn2 - b-1) * params.kk - 2) / 2, 1, 0);
     ratio /= (exp(Rf_lbeta((double) (params.kk * b + 1) / 2,
                            (double) ((params.nn2 - b) * params.kk - 2) / 2))*
-              Rf_pbeta(xmax0, 
+              Rf_pbeta(xmax0,
                       (double) (params.kk * b + 1) / 2,
                       (double) ((params.nn2 - b) * params.kk - 2) / 2, 1, 0));
     p = ratio/(1+ratio);
-  } 
-  // Rprintf("p:%0.2f\n", p); 
+  }
+  // Rprintf("p:%0.2f\n", p);
   return p;
 }
 
@@ -143,7 +143,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, Params &params)
         }
       }
       if (params.kk == 1 && bvals[0] == 1) Bvals[0] = 0; // force this to avoid rounding errs
-      else 
+      else
         Bvals[0] = stepnew.B - tmp + bZ3;
       Wvals[0] = stepnew.W + tmp - bZ3;
     }
@@ -180,19 +180,19 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, Params &params)
       Bvals[1] = stepnew.B - tmp + bZ1 + bZ2;
       Wvals[1] = stepnew.W + tmp - bZ1 - bZ2;
     }
-    
+
     // if (i == 4122) return(stepnew);
     double p = getprob(Bvals[0], Bvals[1], Wvals[0], Wvals[1], bvals[0], params);
     // do the sampling and then updates
     double myrand = Rf_runif(0.0, 1.0);
-    
-    if (myrand < p) { 
+
+    if (myrand < p) {
       cp = 1;
     } else {
       cp = 0;
     }
     // Rprintf("i:%d  p=%0.4f, myrand=%0.2f, cp=%d\n", i, p, myrand, cp);
-    
+
     stepnew.B = Bvals[cp];
     stepnew.W = Wvals[cp];
     stepnew.b = bvals[cp];
@@ -246,7 +246,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, Params &params)
   // done with a full pass, now let's add info on the final block
   if (lastbend > -1)
     stepnew.bsize.push_back(params.nn2 - helpers.cumksize[lastbend]);
-  else 
+  else
     stepnew.bsize.push_back(params.nn2);
   for (j = 0; j < params.kk; j++) {
     if (lastbend > -1) {
@@ -259,7 +259,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, Params &params)
   stepnew.bmean.push_back(bmeanlast);
   stepnew.bZ.push_back(bZlast);
   stepnew.bend.push_back(params.nn - 1);
-
+  stepnew.rho.push_back(1);
   return stepnew;
 }
 
@@ -278,15 +278,18 @@ SEXP rcpp_bcpM(SEXP pdata, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc,
   double wstar, xmax;
 
   // INITIALIZATION OF OTHER OBJECTS
-  // Rprintf("numrows:%d\n", data.nrow());
   HelperVariables helpers(data, pid);
-  Params params(pw, helpers.cumksize.size(), data.nrow(), pa, false, false, 
+  Params params(pw, helpers.cumksize.size(), data.nrow(), pa, false, false,
                 0, 0, data.ncol());
+  //params.print();
+  //helpers.print();
   int MM = burnin + mcmc;
-  
+
+  //helpers.print();
+  //params.print();
+
   MCMCStepSeq step(helpers, params);
-  // helpers.print();
-  // params.print();
+
   int MM2, nn2;
   if (mcmcreturn == 0) {
     MM2 = 1;
@@ -306,7 +309,7 @@ SEXP rcpp_bcpM(SEXP pdata, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc,
   NumericMatrix results(nn2*MM2,params.kk);
 
   double tmpMean;
-  
+
   // Rprintf("starting\n");
   GetRNGstate(); // Consider Dirk's comment on this.
   // step.print();
@@ -317,50 +320,57 @@ SEXP rcpp_bcpM(SEXP pdata, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc,
     }
   }
   for (m = 0; m < MM; m++) {
-
+    // Rprintf("Step %d -- ", m);
     step = pass(step, helpers, params);
-    // Rprintf(" m %d\n", m);
-    //step.print();
+    // Rprintf("blocks:%d, B:%0.2f\n", step.b, step.B);
     blocks[m] = step.b;
     if (m >= burnin || mcmcreturn == 1) {
       // compute posteriors
       if (step.B == 0) {
         wstar = params.w[0] * (step.b*params.kk + 1) / (step.b * params.kk +3);
       } else {
+
         xmax = step.B * params.w[0] / step.W / (1 + step.B * params.w[0] / step.W);
+        // Rprintf("xmax:%0.2f\n", xmax);
         // wstar = log(step.W) - log(step.B)
         //   + Rf_lbeta((double) (step.b* params.kk + 3) / 2, (double) ((params.nn2 - step.b)*params.kk - 4) / 2)
         //   + Rf_pbeta(xmax, (double) (step.b*params.kk + 3) / 2, (double) ((params.nn2  - step.b)*params.kk - 4) / 2, 1, 1)
         //   - Rf_lbeta((double) (step.b*params.kk + 1) / 2, (double) ((params.nn2  - step.b)*params.kk - 2) / 2)
         //   - Rf_pbeta(xmax, (double) (step.b * params.kk+ 1) / 2, (double) ((params.nn2  - step.b)*params.kk - 2) / 2, 1, 1);
         // wstar = exp(wstar);
-        wstar = (step.W/step.B)* 
+        wstar = (step.W/step.B)*
           Rf_beta((double) (step.b* params.kk + 3) / 2, (double) ((params.nn2 - step.b)*params.kk - 4) / 2) *
           Rf_pbeta(xmax, (double) (step.b*params.kk + 3) / 2, (double) ((params.nn2  - step.b)*params.kk - 4) / 2, 1, 0) /
           Rf_beta((double) (step.b*params.kk + 1) / 2, (double) ((params.nn2  - step.b)*params.kk - 2) / 2) /
           Rf_pbeta(xmax, (double) (step.b * params.kk+ 1) / 2, (double) ((params.nn2  - step.b)*params.kk - 2) / 2, 1, 0);
+        // Rprintf("wstar:%0.2f\n", wstar);
+
       }
-      // for posterior estimate of overall noise variance      
+      // for posterior estimate of overall noise variance
       // if (m >= burnin)
-        // pvar += (step.W + wstar*step.B)/(params.nn2 * params.kk-3); 
+        // pvar += (step.W + wstar*step.B)/(params.nn2 * params.kk-3);
       k = 0;
       for (j = 0; j < params.nn; j++) {
+        // Rprintf("j:%d out of %d (%d, %d)  | ", j, params.nn, pchange.size(), step.rho.size());
+        // Rprintf("pchange[%d]: %0.2f, step.rho:%d\n", j, pchange[j], step.rho[j]);
         if (m >= burnin)
           pchange[j] += (double) step.rho[j];
         for (i = 0; i < params.kk; i++) {
           tmpMean = step.bmean[k][i] * (1 - wstar) + helpers.ybar * wstar;
-          if (m >= burnin) {            
+          // Rprintf("i:%d -- tmpMean:%0.2f, wstar:%0.2f, bmean:%0.2f, ybar:%0.2f\n",
+                  // i, tmpMean, wstar, step.bmean[k][i], helpers.ybar);
+          if (m >= burnin) {
             pmean(j, i) += tmpMean;
             ss(j, i) += tmpMean * tmpMean;
+            // Rprintf("pmean:%0.2f, ss:%0.2f\n", pmean(j,i), ss(j,i));
           }
-          if (mcmcreturn == 1) 
+          if (mcmcreturn == 1)
             results(m*params.nn+j, i) = tmpMean;
         }
-                    
+
         if (mcmcreturn == 1)
           rhos(j, m) = step.rho[j];
         if (step.rho[j] == 1) k++;
-
       }
     }
   }

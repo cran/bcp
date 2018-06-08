@@ -39,19 +39,19 @@ int sampleFromLikelihoods(DoubleVec &likvals, double maxlik) {
   return -1; // this won't be triggered anyway
 }
 
-DoubleVec matrixCalcs(HelperVariables& helpers, 
-                      Params& params, 
-                      DoubleVec &w, 
+DoubleVec matrixCalcs(HelperVariables& helpers,
+                      Params& params,
+                      DoubleVec &w,
                       int start, int end) {
   int n;
   if (start > 0) {
-    n = helpers.cumksize[end]-helpers.cumksize[start-1]; 
-  } else      
+    n = helpers.cumksize[end]-helpers.cumksize[start-1];
+  } else
     n = helpers.cumksize[end];
-  
+
   mat Winv = zeros(params.kk, params.kk);
-  mat Pmat = eye(n, n) - ones(n,n)/n; 
-  if (start > 0) 
+  mat Pmat = eye(n, n) - ones(n,n)/n;
+  if (start > 0)
     start = helpers.cumksize[start-1];
   end = helpers.cumksize[end]-1;
   mat Xtilde = Pmat*helpers.X(span(start, end), span(1,helpers.X.n_cols-1));
@@ -76,20 +76,20 @@ DoubleVec matrixCalcs(HelperVariables& helpers,
   mat tmp = XXW*Winv.i();
   log_det(detval, detsign, tmp);
   ret[1] = -0.5*detval;
-  return ret; 
+  return ret;
 }
 
 // printtimp defaults to 0
-MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, 
+MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
                  Params &params, int printtmp=0) {
-  
+
   int i, cp, tau, s;
-  
+
   int bsize1, bsize2, bsize3;
   double bmean1, bmean2, bmean3, maxlik;
   double bK1=0, bK2=0, bK3=0, bK4=0;
   double tmp;
-  
+
   DoubleVec likvals(6);
   DoubleVec logCvals(6);
   DoubleVec Kvals(6);
@@ -98,16 +98,16 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
   DoubleVec Wvals(2);
   DoubleVec Bvals(2);
   double Qval0, logCval0, Kval0;
-  
-  DoubleVec matOutput(2); 
-  DoubleVec matOutput1(2); 
-  DoubleVec matOutput2(2); 
+
+  DoubleVec matOutput(2);
+  DoubleVec matOutput1(2);
+  DoubleVec matOutput2(2);
   int prevblock = 0;
-  
+
   // this is used to reference the current MCMCStep we build from scratch
   MCMCStepSeq stepnew(step);
   int currblock = 0;
-  
+
   // some other variables to denote stuff in current block and previous block
   // Note that "last" refers to the immediately left-adjacent block
   // whereas "prev" refers to the same block in the variable step
@@ -118,7 +118,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
   double thisblogC = step.blogC[0];
   double thisbK = step.bK[0];
   double thisbQ = step.bQ[0];
-  
+
   double lastblockZ = 0;
   int lastbend = -1; // this is simply a notational convenience
   // double lastbetasqv = 0;
@@ -126,11 +126,11 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
   double lastblogC = 0;
   double lastbK = 0;
   double lastbQ = 0;
-  
+
   // start the loop
   for (i = 0; i < params.nn - 1; i++) {//
     // Rprintf("i:%d\n", i);
-    
+
     maxlik = -DBL_MAX;
     if (i == step.bend[prevblock]) {
       // we're at an old change point, so we need to refresh "this" to be the
@@ -141,7 +141,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
       lastbK = thisbK;
       lastbQ = thisbQ;
       prevblock++;
-      
+
       thisbend = step.bend[prevblock];
       thisblockZ = step.bZ[prevblock];
       thisbtau = step.btau[prevblock];
@@ -149,7 +149,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
       thisbK = step.bK[prevblock];
       thisbQ = step.bQ[prevblock];
     }
-    
+
     // set the defaults
     if (step.rho[i] == 1) {
       Qval0 = stepnew.Q - thisbQ - lastbQ;
@@ -160,7 +160,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
       logCval0 = stepnew.logC - thisblogC;
       Kval0 = stepnew.K - thisbK;
     }
-    
+
     /****
     * consider if cp = 0 (not a change point)
     */
@@ -194,14 +194,14 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         Qvals[tau] += matOutput[0];
         logCvals[tau] += matOutput[1];
       }
-      
+
       Kvals[tau] = Kval0 + logKcalc(bsize3, tau, params);
       likvals[tau] = likelihood(Bvals[0], Wvals[0], bvals[0], params, logCvals[tau],
                                 Qvals[tau], Kvals[tau]);
       if (likvals[tau] > maxlik)
         maxlik = likvals[tau];
     }
-    
+
     /****
     * consider if cp = 1 (make a change point)
     */
@@ -220,9 +220,9 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     }
     if (step.rho[i] == 0)
       tmp = thisblockZ - pow(bmean1, 2) * bsize1 - pow(bmean2, 2) * bsize2;
-    
-    // Rprintf("thisbZ:%0.2f, bmean1:%0.2f, bsize1:%d, bmean2:%0.2f, bsize2:%d, tmp:%0.4f\n", 
-    //   thisblockZ, bmean1, bsize1, 
+
+    // Rprintf("thisbZ:%0.2f, bmean1:%0.2f, bsize1:%d, bmean2:%0.2f, bsize2:%d, tmp:%0.4f\n",
+    //   thisblockZ, bmean1, bsize1,
     //   bmean2, bsize2, tmp);
     Bvals[1] = stepnew.B - tmp;
     Wvals[1] = stepnew.W + tmp;
@@ -232,7 +232,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     if (bsize1 >= params.nreg) {
       bK2 = logKcalc(bsize1, 1, params);
       matOutput1 = matrixCalcs(helpers, params, stepnew.w, lastbend+1, i);
-    } 
+    }
     bK3 = logKcalc(bsize2, 0, params);
     if (bsize2 >= params.nreg) {
       matOutput2 = matrixCalcs(helpers, params, stepnew.w, i+1, thisbend);
@@ -240,12 +240,12 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     }
     // Rprintf("bK1:%0.2f, bK2:%0.2f bK3:%0.2f bK4:%0.2f\n", bK1, bK2, bK3,bK4);
     for (tau = 2; tau < 6; tau++) {
-      if ((bsize1 < params.nreg && tau > 3) || (bsize2 < params.nreg && 
+      if ((bsize1 < params.nreg && tau > 3) || (bsize2 < params.nreg &&
           (tau == 3 || tau == 5))) {
         likvals[tau] = -DBL_MAX;
         continue;
       }
-      
+
       Kvals[tau] = Kval0 + bK1*(tau < 4) + bK2*(tau >= 4)+
         bK3*(tau == 2 || tau == 4)+
         bK4*(tau == 3 || tau == 5);
@@ -257,16 +257,16 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
       }
       if (tau == 3 || tau == 5) {
         Qvals[tau] += matOutput2[0];
-        logCvals[tau] += matOutput2[1];        
+        logCvals[tau] += matOutput2[1];
       }
       likvals[tau] = likelihood(Bvals[1], Wvals[1], bvals[1], params,
-                                logCvals[tau], Qvals[tau], 
+                                logCvals[tau], Qvals[tau],
                                                     Kvals[tau]);
       if (likvals[tau] > maxlik)
         maxlik = likvals[tau];
     }
     // do the sampling and then updates
-    
+
     s = sampleFromLikelihoods(likvals, maxlik);
     if (s < 2)
       cp = 0;
@@ -279,7 +279,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         // update last block's stuff since the last block is now further back
         thisblockZ = pow(bmean3, 2) * bsize3;
         thisbK += Kvals[s] - stepnew.K+lastbK;
-        
+
         if (currblock > 0) {
           lastbend = stepnew.bend[currblock - 1];
           lastblockZ = stepnew.bZ[currblock - 1];
@@ -298,11 +298,11 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
       } else { // added a change point
         thisblockZ = pow(bmean2, 2) * bsize2;
         lastblockZ = pow(bmean1, 2) * bsize1;
-        
+
       }
     }
     stepnew.rho.push_back(cp);
-    
+
     if (stepnew.rho[i] == 0) {
       if(step.rho[i]==0) thisbK += Kvals[s] - stepnew.K;
       if (s == 1) {
@@ -313,8 +313,8 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         thisblogC = 0;
       }
       thisbtau = s;
-      
-      
+
+
     } else if (stepnew.rho[i] == 1) {
       // we've added a change point, so we want to record some stuff
       if (s < 4) {
@@ -325,8 +325,8 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         lastbtau = 1;
         lastbQ = matOutput1[0];
         lastblogC = matOutput1[1];
-      }        
-      
+      }
+
       if (s == 2 || s == 4) {
         thisbtau = 0;
         thisbQ = 0;
@@ -336,10 +336,10 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         thisbQ = matOutput2[0];
         thisblogC = matOutput2[1];
       }
-      
+
       lastbK = bK1*(s == 2 || s == 3) + bK2*(s >= 4);
       thisbK = bK3*(s == 2 || s == 4) + bK4*(s == 3 || s == 5);
-      
+
       stepnew.bsize.push_back(bsize1);
       stepnew.bend.push_back(i);
       // stepnew.bmean.push_back(bmean1);
@@ -360,20 +360,20 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     stepnew.K = Kvals[s];
   }
   // done with a full pass, now let's add info on the final block
-  if (lastbend < 0) 
+  if (lastbend < 0)
     stepnew.bsize.push_back(params.nn2);
   else
     stepnew.bsize.push_back(params.nn2 - helpers.cumksize[lastbend]);
-  
+
   stepnew.bQ.push_back(thisbQ);
   stepnew.bend.push_back(params.nn - 1);
   stepnew.btau.push_back(thisbtau);
   stepnew.blogC.push_back(thisblogC);
   stepnew.bZ.push_back(thisblockZ);
   stepnew.bK.push_back(thisbK);
-  
+
   // sample w2
-  double lik;  
+  double lik;
   for (i = 1; i <= params.kk; i++) {
     DoubleVec w2cand = stepnew.w;
     w2cand[i] = stepnew.w[i] + Rf_runif( - 0.05 * params.w[i], 0.05 * params.w[i]);
@@ -384,7 +384,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     double Q0 = 0;
     double logC0 = 0;
     lastbend = -1;
-    
+
     for (s = 0; s < stepnew.b; s++) {
       thisbend = stepnew.bend[s];
       // Rprintf("s:%d\n",s);
@@ -398,14 +398,14 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
         logCvec[s] = 0;
         Qvec[s] = 0;
       }
-      
+
       lastbend = thisbend;
     }
     lik = likelihood(stepnew.B, stepnew.W, stepnew.b, params, logC0,
                      Q0, stepnew.K);
     // Rprintf("lik:%0.9f\n", lik);
     double p = exp(lik - stepnew.lik);
-    
+
     p = p / (1 + p);
     double u = Rf_runif(0.0, 1.0);
     // Rprintf("p:%0.8f u: %0.8f\n", p, u);
@@ -419,6 +419,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
     }
   }
   // Rprintf("w:%0.10f\n", stepnew.w[1]);
+  stepnew.rho.push_back(1);
   return stepnew;
 }
 
@@ -428,12 +429,12 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
   // INITIALIZATION OF LOCAL VARIABLES
   int i, j, m, start, end, start2, end2, resultStart, resultEnd;
   double Wtilde, wstar, bmean, xmax, tmpAlpha;
-  
-  // INITIALIZATION OF OTHER OBJECTS  
+
+  // INITIALIZATION OF OTHER OBJECTS
   HelperVariables helpers(py, px, pid);
   mat grpInds = as<mat>(pgrpinds);
   // helpers.print();
-  Params params(pw, helpers.cumksize.size(), helpers.Y.n_rows, pa, true, false, 
+  Params params(pw, helpers.cumksize.size(), helpers.Y.n_rows, pa, true, false,
                 NUMERIC_DATA(pba)[0], INTEGER_DATA(pnreg)[0]);
   MCMCStepSeq step(helpers, params);
   mat Winv = zeros(params.kk, params.kk);
@@ -441,14 +442,14 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
   int burnin = INTEGER_DATA(pburnin)[0];
   int mcmc = INTEGER_DATA(pmcmc)[0];
   int MM = burnin + mcmc;
-  
+
   int nn2 = params.nn;
   int MM2 = burnin + mcmc;
   if (mcmcreturn == 0) {
     MM2 = 1;
     nn2 = 1;
   }
-  
+
   // Things to be returned to R:
   // NumericVector pmean(params.nn);
   vec pmean = zeros<vec>(params.nn);
@@ -463,16 +464,16 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
   // NumericVector liks(MM2);
   GetRNGstate(); // Consider Dirk's comment on this.
   // step.print();
-  
+
   for (m = 0; m < MM; m++) {
-    step = pass(step, helpers, params);   
-    blocks[m] = step.b; 
+    step = pass(step, helpers, params);
+    blocks[m] = step.b;
     if (mcmcreturn == 1) {
       // liks[m] = step.lik;
       for (j = 0; j < params.nn; j++) {
         rhos(j, m) = step.rho[j];
       }
-    } 
+    }
     if (m >= burnin || mcmcreturn == 1) {
       // Rprintf("m:%d\n", m);
       // step.print();
@@ -491,21 +492,21 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
       } else
         wstar = params.w[0]/2;
       // pvar += (Wtilde + wstar*step.B)/(params.nn2 - 3);
-      
+
       start = 0;
       for (i = 0; i < step.b; i++) {
         end = step.bend[i];
-        
+
         if (start > 0) {
           bmean = (helpers.cumy[end]-helpers.cumy[start-1])/step.bsize[i];
           start2 = helpers.cumksize[start-1];
         } else  {
           bmean = helpers.cumy[end]/step.bsize[i];
           start2 = 0;
-        }        
-        end2 = helpers.cumksize[end]-1;        
+        }
+        end2 = helpers.cumksize[end]-1;
         mat grpIndMat = grpInds(span(start, end), span(start2, end2));
-        
+
         tmpAlpha = bmean * (1 - wstar) + helpers.ybar * wstar;
         vec tmpMean = grpIndMat*(ones(step.bsize[i], 1)* tmpAlpha);
         vec fitted = tmpMean;
@@ -513,21 +514,21 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
           resultStart = params.nn*m+start;
           resultEnd = params.nn*m+end;
           results(span(resultStart, resultEnd), 1) = tmpMean;
-        }          
-        if (m >= burnin) 
-          betaposts(span(start, end), 0) += tmpMean;            
-        
+        }
+        if (m >= burnin)
+          betaposts(span(start, end), 0) += tmpMean;
+
         if (step.btau[i] == 1) {
-          mat Pmat = eye(step.bsize[i], step.bsize[i]) 
-          - ones(step.bsize[i],step.bsize[i])/step.bsize[i]; 
-          
-          mat Xtilde = Pmat*helpers.X(span(start2, end2), span(1, params.kk));          
+          mat Pmat = eye(step.bsize[i], step.bsize[i])
+          - ones(step.bsize[i],step.bsize[i])/step.bsize[i];
+
+          mat Xtilde = Pmat*helpers.X(span(start2, end2), span(1, params.kk));
           mat XXW = Xtilde.t()*Xtilde;
           bool ok = FALSE;
           while(!ok) {
             for (int ii = 0; ii < params.kk; ii++) {
               if (XXW(ii,ii) < 1e-12) {
-                Xtilde = Pmat*(helpers.X(span(start2, end2), span(1,params.kk))+ 
+                Xtilde = Pmat*(helpers.X(span(start2, end2), span(1,params.kk))+
                   mvrnormArma(step.bsize[i], params));
                 XXW = Xtilde.t()*Xtilde;
                 break; // this breaks the loop and since !ok, checks for XXW=0 all over again
@@ -541,7 +542,7 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
           vec bhats = XXW.i()*sumxy;
           mat bhatMat = repmat(bhats.t(), end-start+1, 1);
           fitted += grpIndMat*Xtilde*bhats;
-          if (m >= burnin) {              
+          if (m >= burnin) {
             betaposts(span(start, end), span(1, params.kk)) += bhatMat;
             betaposts(span(start, end), 0) -= bhatMat*helpers.X(span(start2, end2), span(1, params.kk)).t()*
               ones(step.bsize[i], 1)/step.bsize[i];
@@ -551,16 +552,16 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
             results(span(resultStart, resultEnd), span(2, params.kk+1)) = bhatMat;
             results(span(resultStart, resultEnd), 1) -= bhatMat*helpers.X(span(start2, end2), span(1, params.kk)).t()*
               ones(step.bsize[i], 1)/step.bsize[i];
-          } 
-          
+          }
+
         }
         if (m >= burnin) {
           pmean.subvec(start,end) += fitted;
           ss.subvec(start, end) += fitted % fitted;
         }
-        
-        start = end+1;         
-        
+
+        start = end+1;
+
       }
       if (m >= burnin)
         for (j = 0; j < params.nn; j++) {
@@ -568,7 +569,7 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
         }
     }
   }
-  
+
   // post processing
   for (j = 0; j < params.nn; j++) {
     pchange[j] = pchange[j] / (double) mcmc;
@@ -577,9 +578,9 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
   }
   // pvar = pvar / mcmc;
   betaposts /= (double) mcmc;
-  
+
   PutRNGstate();
-  
+
   List z;
   z["posterior.mean"] = wrap(pmean);
   z["posterior.var"] = wrap(pvar);

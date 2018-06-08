@@ -290,10 +290,13 @@
       if (is.null(w0)) w0 <- 0.2
       if (w0 > 1 | w0 < 0) stop("w0 must be between 0 and 1.")
       if (is.vector(y)) y <- cbind(y)
+      
+      colnames(y) <- NULL
+      rownames(y) <- NULL
       # Do the work in C:
       if (is.null(adj)) {
         out <- rcpp_bcpM(
-          y, as.integer(id),
+          as.matrix(y), as.integer(id),
           as.integer(return.mcmc),
           as.integer(burnin), 
           as.integer(mcmc),     

@@ -2,7 +2,7 @@
 #define MCMCSTEP_H
 
 #include <vector>
-#include <RcppArmadillo.h>  
+#include <RcppArmadillo.h>
 
 #include "Graph.h"
 
@@ -21,7 +21,7 @@ using namespace arma;
 // forward declarations (of functions actually in utils.cpp)
 double logKcalc(int bsize, int tau, Params& params);
 
-double likelihood(double B, double W, int b, Params& params, double logC, 
+double likelihood(double B, double W, int b, Params& params, double logC,
                   double Q, double K, int type);
 
 
@@ -44,7 +44,7 @@ public:
     b = step.b;
     lik = step.lik;
   }
-  
+
 };
 
 class MCMCStepGraph: public MCMCStep {
@@ -52,25 +52,25 @@ public:
   double K;
   double logC;
   double Q;
-  
+
   DoubleVec w;
   int len;
-  
+
   MCMCStepGraph() : MCMCStep() {
     len = 0;
     logC = 0.0;
     Q = 0.0;
     K = 0.0;
   }
-  MCMCStepGraph(Partition &components, Graph &graph, 
-                           GraphParams &params, 
+  MCMCStepGraph(Partition &components, Graph &graph,
+                           GraphParams &params,
                            DoubleVec &w0 = DEFAULT_DOUBLEVEC) : MCMCStep()
   {
     len = 0;
     Q = 0;
     logC = 0;
     K = 0;
-    
+
     int i, j;
     W = graph.sumysq;
     B = -params.nn2 * pow(graph.mean, 2);
@@ -85,35 +85,35 @@ public:
         logC += components[i].logC;
         K += components[i].K;
       }
-     
+
     }
     if (params.reg) w = w0;
-    for (i = 0; i < params.nn; i++) {   
+    for (i = 0; i < params.nn; i++) {
       if (params.boundaryType == 1) {
         for (j = 0; j < b; j++) {
           len += graph.boundarymat[j][i];
         }
       }
-      else if (params.boundaryType == 2) 
+      else if (params.boundaryType == 2)
         len += graph.nodes[i].boundlen;
     }
     // Rprintf("W:%0.2f, B: %0.2f\n", W, B);
     calcLogLik(params);
   }
-  
+
   // other functions
-  
+
   void calcLogLik(GraphParams &params)
   {
     if (abs(W) < 1.0e-12) {
       W = 1.0e-12;
     }
-    
+
     if (params.reg) {
       double Wtilde = W - Q;
-      
+
       if (b == 1) {
-        lik = logC + K + log(params.w[0]) 
+        lik = logC + K + log(params.w[0])
         - (params.nn2 - 1) * log(Wtilde) / 2;
       } else if (b >= params.nn - 5) {
         lik = -DBL_MAX;
@@ -121,13 +121,13 @@ public:
         double xmax = (B * params.w[0] / Wtilde) / (1 + (B * params.w[0] / Wtilde));
         lik = logC + K + len * log(params.p0)
           + Rf_pbeta(xmax, (double) (b + 1) / 2, (double) (params.nn2 - b - 2) / 2, 1, 1)
-          + Rf_lbeta((double) (b + 1) / 2, (double) (params.nn2 - b - 2) / 2) 
+          + Rf_lbeta((double) (b + 1) / 2, (double) (params.nn2 - b - 2) / 2)
           - (b + 1) * log(B) / 2
           - (params.nn2 - b - 2) * log(Wtilde) / 2;
       }
     } else {
       double xmax = B * params.w[0] / W / (1 + B * params.w[0] / W);
-      
+
       if (B == 0) {
         lik = len * log(params.p0) + (params.kk + 1) * log(params.w[0]) / 2
         - (params.kk * params.nn2 - 1) * log(W) / 2;
@@ -143,10 +143,10 @@ public:
         - ((params.nn2 - b) * params.kk - 2) * log(W) / 2;
       }
     }
-    
+
   }
-  
-  void updateLogLik(GraphParams &params, Graph &graph, 
+
+  void updateLogLik(GraphParams &params, Graph &graph,
                     Partition &partition, Component &newcomp,
                     Component &oldcomp, Node &node, int newCompId)
   {
@@ -195,14 +195,14 @@ public:
           // add 1 if node is boundary of old block
           len -= graph.boundarymat[newCompId][node.id];
           len += neighborsOldBlock;
-          
+
         } else if (params.boundaryType == 2) {
           len -= 2 * node.boundlen;
           for (i = 0; i < node.neighbors.size(); i++) {
             len += 2 * (graph.nodes[node.neighbors[i]].component != newCompId);
           }
         }
-        
+
         // update globals
         Zdiff = partition[node.component].Z - newcomp.Z - oldcomp.Z;
         if (newCompId < partition.size()) {
@@ -211,7 +211,7 @@ public:
         B -= Zdiff;
         W += Zdiff;
       }
-      
+
       Q += newcomp.Q - partition[node.component].Q;
       K += newcomp.K - partition[node.component].K;
       logC += newcomp.logC - partition[node.component].logC;
@@ -224,25 +224,25 @@ public:
           K -= partition[newCompId].K;
           logC -= partition[newCompId].logC;
         }
-      }  
+      }
     } else { // multivariate
       if (newCompId == node.component) {
         return;
       }
-      
+
       int neighborsOldBlock, neighborOfOldComp, i, j;
       double Zdiff;
       b += 1 * (newCompId == b) - 1 * (partition[node.component].size == node.size);
-      
+
       // update bound length
       if (params.boundaryType == 1) {
         if (newCompId >= graph.boundarymat.size()) {
           IntVec vboundary(params.nn, 0);
           graph.boundarymat.push_back(vboundary);
         }
-        
+
         neighborsOldBlock = 0;
-        
+
         for (i = 0; i < node.neighbors.size(); i++) {
           // subtract neighboring nodes that are no longer on the boundary of oldComp
           // this disqualifies any neighboring nodes that are in oldComp
@@ -251,65 +251,65 @@ public:
             // check if any of their other neighbors are in oldComp
             neighborOfOldComp = 0;
             Node neighborNode = graph.nodes[node.neighbors[i]];
-            
+
             for (j = 0; j < neighborNode.neighbors.size(); j++) {
               if (neighborNode.neighbors[j] == node.id) {
                 continue;
               }
-              
+
               if (graph.nodes[neighborNode.neighbors[j]].component == node.component) {
                 neighborOfOldComp = 1;
                 break;
               }
             }
-            
+
             len -= (1 - neighborOfOldComp);
           } else {
             neighborsOldBlock = 1;
           }
-          
-          
+
+
           // add nodes that were not previously on the boundary of newComp but now are
           len -= graph.boundarymat[newCompId][node.neighbors[i]];
           len += (graph.nodes[node.neighbors[i]].component != newCompId);
         }
-        
+
         // node is no longer boundary of newComp
         // add 1 if node is boundary of old block
         len -= graph.boundarymat[newCompId][node.id];
         len += neighborsOldBlock;
-        
+
       } else if (params.boundaryType == 2) {
         len -= 2 * node.boundlen;
-        
+
         for (i = 0; i < node.neighbors.size(); i++) {
           len += 2 * (graph.nodes[node.neighbors[i]].component != newCompId);
         }
       }
-      
+
       Zdiff = partition[node.component].Z - newcomp.Z - oldcomp.Z;
-      
+
       if (newCompId < partition.size()) {
         Zdiff += partition[newCompId].Z;
       }
-      
+
       B -= Zdiff;
       W += Zdiff;
-      
+
       if (params.kk == 1 && b == 1) B = 0;
     }
     calcLogLik(params);
   }
-  
-  void updateLogLikForMerge(GraphParams &params, Graph &graph, 
-                            Partition &partition, Component &newcomp, 
+
+  void updateLogLikForMerge(GraphParams &params, Graph &graph,
+                            Partition &partition, Component &newcomp,
                             int currblock, int newblock)
   {
     int i;
     double Zdiff;
     b--;
     // update bound length
-    if (params.boundaryType == 1) {      
+    if (params.boundaryType == 1) {
       // subtract boundaries between the old and new comp (since merged now)
       for (i = 0; i < params.nn; i++) {
         if (newcomp.nodeIds[i] == 1) {
@@ -319,10 +319,10 @@ public:
         if (graph.boundarymat[currblock][i] == 1 && graph.boundarymat[newblock][i] == 1) {
           len--;
         }
-        
+
       }
-    } 
-    
+    }
+
     // update globals
     Zdiff = partition[newblock].Z + partition[currblock].Z - newcomp.Z;
     B -= Zdiff;
@@ -333,24 +333,24 @@ public:
     calcLogLik(params);
   }
   void print() {
-    Rprintf("lik:%0.2f, W:%0.2f, B:%0.2f, logC:%0.2f, K:%0.2f, Q:%0.2f, len =%d, b=%d\n", 
+    Rprintf("lik:%0.2f, W:%0.2f, B:%0.2f, logC:%0.2f, K:%0.2f, Q:%0.2f, len =%d, b=%d\n",
             lik, W, B, logC, K, Q, len, b);
     for (int i = 0; i < w.size(); i++) Rprintf("w: %0.6f", w[i]);
     Rprintf("\n");
-  } 
+  }
 };
 class MCMCStepSeq: public MCMCStep {
 public:
   double K;
   double logC;
   double Q;
-  
+
   DoubleVec w;
-  
+
   // blocks variables
   IntVec btau;
   IntVec rho;
-  
+
   IntVec bend;
   IntVec bsize;
   DoubleVec bZ;
@@ -358,35 +358,35 @@ public:
   DoubleVec bK;
   DoubleVec bQ;
   DoubleMatrix bmean;
-  
+
   // constructors
   MCMCStepSeq(const MCMCStepSeq& step) : MCMCStep(step) {
     // W = step.W;
     // B = step.B;
     // b = step.b;
-    logC = step.logC; 
+    logC = step.logC;
     w = step.w;
     K = step.K;
     // lik = step.lik;
     Q = step.Q;
   }
-  
-  MCMCStepSeq(HelperVariables &helpers, Params &params) : MCMCStep() 
+
+  MCMCStepSeq(HelperVariables &helpers, Params &params) : MCMCStep()
   {
     for (int i = 0; i < params.nn - 1; i++) {
       rho.push_back(0);
       if (params.reg) {
         if (i > 0 && i <= params.kk)
           w.push_back(params.w[i]/2);
-        else if (i == 0) 
+        else if (i == 0)
           w.push_back(params.w[0]);
-      } 
+      }
     }
     rho.push_back(1);
     btau.push_back(0);
     bend.push_back(params.nn - 1);
     bsize.push_back(params.nn2);
-    
+
     if (params.reg) {
       bZ.push_back(pow(helpers.cumy[params.nn - 1], 2) / params.nn2);
       bK.push_back(logKcalc(params.nn2, btau[0], params));
@@ -411,7 +411,7 @@ public:
       lik = likelihood(B, W, b, params);
     }
   }
- 
+
   //other methods
   void print() {
     Rprintf("MCMCStep Info\n");
@@ -436,23 +436,23 @@ public:
   IntVec boundlens;
   DoubleVec simErr;
   IntVec type2pix;
-  
+
   int k; // keeping track of which position we're at
-  
+
   // posterior stuff (only needed for regression)
   vec pmeans;
   vec pvar;
   vec ss;
   DoubleVec pboundary;
   DoubleVec movedBlock; // to keep track # times a node moves
-  
+
   // constructors
-  MCMC(Partition &components, Graph &graph, GraphParams &params, 
+  MCMC(Partition &components, Graph &graph, GraphParams &params,
        DoubleVec &w0 = DEFAULT_DOUBLEVEC)
   {
     MCMCStepGraph step1(components, graph, params, w0);
     step = step1;
-    
+
     if (params.reg) {
       pvar = zeros<vec>(params.nn);
       pmeans = zeros<vec>(params.nn);
@@ -461,35 +461,35 @@ public:
       movedBlock.assign(params.nn, 0);
     }
     simErr.assign(params.nn, 0);
-    
+
     int MM = params.burnin + params.mcmc + 101;
     ll.assign(MM, 0);
     Mvals.assign(MM, 0);
     wstarvals.assign(MM, 0);
     type2pix.assign(params.mcmc + params.burnin, 0);
     boundlens.assign(MM, 0);
-    
+
     k = 0;
     addStep(params);
   }
-  
+
   // other methods
   void addStep(GraphParams &params)
   {
     ll[k] = step.lik;
     Mvals[k] = step.b;
     boundlens[k] = step.len;
-    
+
     double wstar = 0.0;
     // step.print();
-    
+
     if (params.reg) {
       if (step.b > 1) {
         double Wtilde = step.W - step.Q;
-        double xmax = step.B * params.w[0] / Wtilde / 
+        double xmax = step.B * params.w[0] / Wtilde /
         (1 + (step.B * params.w[0] / Wtilde));
         // Rprintf("W:%0.2f Q:%0.2f\n", step.W, step.Q);
-        
+
         wstar = log(Wtilde) - log(step.B)
           + Rf_pbeta(xmax, (double) (step.b + 3) / 2, (double) (params.nn2 - step.b - 4) / 2, 1, 1)
           + Rf_lbeta((double) (step.b + 3) / 2, (double) (params.nn2 - step.b - 4) / 2)
@@ -517,9 +517,9 @@ public:
         wstar = params.w[0] * (step.b * params.kk + 1) / (step.b * params.kk + 3);
       }
     }
-    
+
     wstarvals[k] = wstar;
-    
+
     k++;
   }
   void postProcessing(GraphParams &params, int mcmc, mat & betaPosts)
@@ -532,7 +532,7 @@ public:
       pvar[i] = (ss[i] /mcmc - pmeans[i]*pmeans[i])*(mcmc/(mcmc-1));
     }
     betaPosts /= mcmc;
-    betaPosts.cols(params.kk+1, betaPosts.n_cols-1) -= 
+    betaPosts.cols(params.kk+1, betaPosts.n_cols-1) -=
       betaPosts.cols(0, params.kk)%betaPosts.cols(0, params.kk);
     //  Rprintf("mcmcits: %d\n", params.itsMCMC);
   }

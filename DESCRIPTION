@@ -1,8 +1,8 @@
 Package: bcp
 Type: Package
 Title: Bayesian Analysis of Change Point Problems
-Version: 4.0.1
-Date: 2018-04-07
+Version: 4.0.2
+Date: 2018-06-08
 Author: Xiaofei Wang, Chandra Erdman, and John W. Emerson
 Maintainer: Xiaofei Wang <xiaofei.wang@yale.edu>
 Depends: graphics, methods, grid
@@ -19,5 +19,5 @@ LinkingTo: Rcpp, RcppArmadillo
 NeedsCompilation: yes
 Repository: CRAN
 RoxygenNote: 6.0.1
-Packaged: 2018-04-07 20:48:07 UTC; eastie
-Date/Publication: 2018-04-11 07:05:27 UTC
+Packaged: 2018-06-08 16:53:22 UTC; eastie
+Date/Publication: 2018-06-08 21:37:58 UTC
