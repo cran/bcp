@@ -161,6 +161,7 @@ legacyplot <- function(x, ...) {
 #' @param xlab (optional) a character string specifying the x-axis label. Defaults to "Location".
 #' @param xaxlab (optional) a vector having length equal to the number of observations giving the x-axis tick labels. Defaults to the sequence from 1 to n.
 #' @param cex.axes (optional) list specifying the sizes of the axes labels. \code{cex.xaxis} specifies the size of the x-axis label, \code{cex.yaxis.lower} specifies the size of the y-axis label of the posterior probability plot, \code{cex.yaxis.upper.default} specifies the size of the y-axis labels of the posterior means plot when the series are displayed in a single plot, and \code{cex.yaxis.upper.separated} specifies the size of the y-axis labels of the posterior means plots when each series is plotted separately.
+#' @param lwd line width
 #' @param ... (optional) additional arguments, ignored.
 #' 
 #' @author Xiaofei Wang, Chandra Erdman, and John W. Emerson
@@ -190,7 +191,7 @@ plot.bcp <- function(x, separated = FALSE,
                      cex.axes = list(cex.xaxis = 0.75,
                                      cex.yaxis.lower = 0.75,
                                      cex.yaxis.upper.default = 0.75,
-                                     cex.yaxis.upper.separated = 0.5),
+                                     cex.yaxis.upper.separated = 0.5), lwd=1,
                      ...) {
   # if (!require(grid)) stop("library(grid) is required and unavailable.\n\n")
   if (attr(x, "structure") == "graph")   
@@ -237,7 +238,7 @@ plot.bcp <- function(x, separated = FALSE,
       for (i in 2:m) {
         grid.points(x$data[,1], x$data[,i], size=size.points, gp=gpar(col=colors[i]-1),
                     pch=pch.points)
-        grid.lines(unique(x$data[,1]), x$posterior.mean[,i-1], gp=gpar(col=colors[i]-1),
+        grid.lines(unique(x$data[,1]), x$posterior.mean[,i-1], gp=gpar(col=colors[i]-1, lwd=lwd),
                    default.units="native")
       }
       popViewport(1)
@@ -260,7 +261,7 @@ plot.bcp <- function(x, separated = FALSE,
         grid.yaxis(gp=gpar(cex=cex.axes$cex.yaxis.upper.separated), main=yloc)
         grid.points(x$data[,1], x$data[,i], size=size.points, gp=gpar(col=colors[i]-1),
                     pch=pch.points)
-        grid.lines(unique(x$data[,1]), x$posterior.mean[,i-1], gp=gpar(col=colors[i]-1),
+        grid.lines(unique(x$data[,1]), x$posterior.mean[,i-1], gp=gpar(col=colors[i]-1, lwd=lwd),
                       default.units="native")
         popViewport(1)
         yloc <- !yloc
@@ -281,7 +282,7 @@ plot.bcp <- function(x, separated = FALSE,
   #    for (i in 1:m) {
         grid.points(x$data[,1], x$data[,2], size=size.points, gp=gpar(col=colors[1]),
                     pch=pch.points)
-        grid.lines(1:n, x$posterior.mean[,1], gp=gpar(col=colors[1]),
+        grid.lines(1:n, x$posterior.mean[,1], gp=gpar(col=colors[1], lwd=lwd),
                    default.units="native")
   #    }
       popViewport(1)
@@ -311,7 +312,7 @@ plot.bcp <- function(x, separated = FALSE,
 
         grid.points(unique(x$data[,1]), x$posterior.mean[,i], size=size.points, gp=gpar(col=colors[1]),
                     pch=pch.points)
-        grid.lines(unique(x$data[,1]), x$posterior.mean[,i], gp=gpar(col=colors[1]),
+        grid.lines(unique(x$data[,1]), x$posterior.mean[,i], gp=gpar(col=colors[1], lwd=lwd),
                       default.units="native")
         popViewport(1)
         yloc <- !yloc
@@ -334,7 +335,7 @@ plot.bcp <- function(x, separated = FALSE,
   } else grid.xaxis(gp=gpar(cex=cex.axes$cex.xaxis))
   grid.text("Posterior Probability", unit(-3, "lines"), 0.5, rot=90)
   grid.text(xlab, 0.5, unit(-2, "lines"))
-  grid.lines(1:max(x$data[,1]), x$posterior.prob, default.units="native")
+  grid.lines(1:max(x$data[,1]), x$posterior.prob, default.units="native", gp = gpar(lwd=lwd))
   popViewport(2) # vp.main and vp.lower
 
 }

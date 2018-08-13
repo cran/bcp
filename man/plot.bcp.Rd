@@ -4,12 +4,14 @@
 \alias{plot.bcp}
 \title{Plotting Bayesian change point results}
 \usage{
-\method{plot}{bcp}(x, separated = FALSE, outer.margins = list(left = unit(4,
-  "lines"), bottom = unit(3, "lines"), right = unit(2, "lines"), top = unit(2,
-  "lines")), lower.area = unit(0.33, "npc"), size.points = unit(0.25,
-  "char"), pch.points = 20, colors = NULL, main = NULL, xlab = NULL,
-  xaxlab = NULL, cex.axes = list(cex.xaxis = 0.75, cex.yaxis.lower = 0.75,
-  cex.yaxis.upper.default = 0.75, cex.yaxis.upper.separated = 0.5), ...)
+\method{plot}{bcp}(x, separated = FALSE, outer.margins = list(left =
+  unit(4, "lines"), bottom = unit(3, "lines"), right = unit(2, "lines"),
+  top = unit(2, "lines")), lower.area = unit(0.33, "npc"),
+  size.points = unit(0.25, "char"), pch.points = 20, colors = NULL,
+  main = NULL, xlab = NULL, xaxlab = NULL,
+  cex.axes = list(cex.xaxis = 0.75, cex.yaxis.lower = 0.75,
+  cex.yaxis.upper.default = 0.75, cex.yaxis.upper.separated = 0.5),
+  lwd = 1, ...)
 }
 \arguments{
 \item{x}{the result of a call to \code{bcp()}.}
@@ -33,6 +35,8 @@
 \item{xaxlab}{(optional) a vector having length equal to the number of observations giving the x-axis tick labels. Defaults to the sequence from 1 to n.}
 
 \item{cex.axes}{(optional) list specifying the sizes of the axes labels. \code{cex.xaxis} specifies the size of the x-axis label, \code{cex.yaxis.lower} specifies the size of the y-axis label of the posterior probability plot, \code{cex.yaxis.upper.default} specifies the size of the y-axis labels of the posterior means plot when the series are displayed in a single plot, and \code{cex.yaxis.upper.separated} specifies the size of the y-axis labels of the posterior means plots when each series is plotted separately.}
+
+\item{lwd}{line width}
 
 \item{...}{(optional) additional arguments, ignored.}
 }

@@ -92,7 +92,7 @@ public:
     int mm = data.ncol();
     int nn2 = data.nrow();
     int N = id[id.size()-1]+1; // number of locations
-    Rprintf("N:%d, idsize:%d, idval1:%d, idval22:%d\n", N, id.size(), id[1], id[22]);
+    // Rprintf("N:%d, idsize:%d, idval1:%d, idval22:%d\n", N, id.size(), id[1], id[22]);
 
     int curr_id = 0;
     cumksize.push_back(1);
@@ -125,7 +125,7 @@ public:
     for (int i = 0; i < mm; i++)
       ybar += cumymat[i][N-1];
     ybar /= (nn2 * mm);
-    Rprintf("mm: %d, nn2: %d, N:%d, cumksize.size: %d\n", mm, nn2, N, cumksize.size());
+    // Rprintf("mm: %d, nn2: %d, N:%d, cumksize.size: %d\n", mm, nn2, N, cumksize.size());
   }
   // other methods
   void print() {

@@ -4,9 +4,9 @@
 \alias{bcp}
 \title{Performs a Bayesian analysis of change point problems}
 \usage{
-bcp(y, x = NULL, id = NULL, adj = NULL, w0 = NULL, p0 = 0.2, d = 10,
-  burnin = 50, mcmc = 500, return.mcmc = FALSE, boundaryType = "node",
-  p1 = 1, freqAPP = 20, nreg = -1)
+bcp(y, x = NULL, id = NULL, adj = NULL, w0 = NULL, p0 = 0.2,
+  d = 10, burnin = 50, mcmc = 500, return.mcmc = FALSE,
+  boundaryType = "node", p1 = 1, freqAPP = 20, nreg = -1)
 }
 \arguments{
 \item{y}{a vector or matrix of numerical data (with no missing values). For
