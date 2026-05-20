@@ -6,7 +6,7 @@
 \title{New Haven housing data}
 \format{A matrix containing location, 2011 assessed value, and physical characteristics in the columns.}
 \source{
-The data can be scraped from the New Haven, CT Online Assessment Database \url{http://gis.vgsi.com/newhavenct/}
+The data can be scraped from the New Haven, CT Online Assessment Database \url{https://gis.vgsi.com/newhavenct/}
 }
 \usage{
 NewHavenHousing
@@ -16,7 +16,7 @@ Location, 2011 assessed value, and physical characteristics for 244 houses in a 
 }
 \examples{
  
-\dontrun{
+\donttest{
 demo("NewHaven")
 }
 

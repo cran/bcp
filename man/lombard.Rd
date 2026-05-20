@@ -18,7 +18,7 @@ Radii of 100 circular indentations cut by a milling machine.
 }
 \examples{
  
-\dontrun{
+\donttest{
 data(lombard)
 # univariate change point analysis
 bcp.model <- bcp(lombard, burnin=500, mcmc=5000, return.mcmc=TRUE)

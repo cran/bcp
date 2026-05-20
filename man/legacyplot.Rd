@@ -21,6 +21,7 @@ Posterior Means: location in the sequence versus the posterior mean over the ite
 
 Posterior Probability of a Change: location in the sequence versus the relative frequency of iterations which resulted in a change point.
 }
+\value{No return value, called for plotting the result}
 \examples{
 ##### A random sample from a few normal distributions #####
 testdata <- c(rnorm(50), rnorm(50, 5, 1), rnorm(50))

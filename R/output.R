@@ -135,6 +135,7 @@ legacyplot <- function(x, ...) {
   axis(2, yaxp=c(0, 0.9, 3))
   par(op3)
   par(op)
+  return(NULL)
 }
 
 #' @title Plotting Bayesian change point results

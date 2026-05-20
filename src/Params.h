@@ -119,7 +119,7 @@ public:
       Rprintf("multivariate: alpha=%0.2f, d=%0.2f w:%0.2f kk:%d\n", p0, d, w[0], kk);
     } else {
       // regression since multiple predictors
-      Rprintf("regression: alpha=%0.2f, d=%0.2f w.size:%d kk:%d\n", p0, d, w.size(), kk);
+      Rprintf("regression: alpha=%0.2f, d=%0.2f w.size:%d kk:%d\n", p0, d, (int) w.size(), kk);
     }
   }
   

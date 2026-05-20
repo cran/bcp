@@ -4,4 +4,4 @@
 To install:
 
 * the latest released version: `install.packages("bcp")`
-* the latest development version: `install_github("swang87/bcp")`
+* the latest development version: `install_github("zhaokg/bcp")`

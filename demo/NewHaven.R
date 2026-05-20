@@ -1,23 +1,24 @@
 data(NewHavenHousing)
 
+if ( require("vegan") &  require("ggplot2") ) {
 
 findNeighborsMST <- function(x) {
-  library(vegan)
-  adj <- cbind(x$Long, x$Lat)
-  adj <- spantree(vegdist(adj, "euclidean"))
+     #  library(vegan)  
+	  adj <- cbind(x$Long, x$Lat)
+	  adj <- spantree(vegdist(adj, "euclidean"))
 
 
-  adj2 <- vector('list', nrow(x))
-  for (i in 2:nrow(x)) {
-    adj2[[i]] <- c(adj2[[i]], adj$kid[i-1]-1)
-  }
-  #make neighborhood structure symmetric
-  for (i in 1:nrow(x)) {
-    for (j in (adj2[[i]]+1)) {
-      adj2[[j]] <- unique(c(adj2[[j]], i-1))
-    }
-  }
-  return(adj2)
+	  adj2 <- vector('list', nrow(x))
+	  for (i in 2:nrow(x)) {
+		adj2[[i]] <- c(adj2[[i]], adj$kid[i-1]-1)
+	  }
+	  #make neighborhood structure symmetric
+	  for (i in 1:nrow(x)) {
+		for (j in (adj2[[i]]+1)) {
+		  adj2[[j]] <- unique(c(adj2[[j]], i-1))
+		}
+	  }
+	  return(adj2)  
 }
 
 
@@ -69,7 +70,7 @@ plotResiduals <- function(yhat, x, membs = NULL, ylim=NULL) {
   print(p)
 }
 
-adj <- findNeighborsMST(NewHavenHousing)
+adj  <- findNeighborsMST(NewHavenHousing)
 dat2 <- data.frame(logval = log(NewHavenHousing$CurVal),
                    sqrtLivingArea = sqrt(NewHavenHousing$LivingArea),
                    beds = NewHavenHousing$TotalBedrooms,
@@ -102,7 +103,7 @@ tmp <- bcp(dat2$logval, z, NULL, adj,
           p1=0, freqAPP=20, return.mcmc=TRUE)
 blocks <- modalBlock(t(tmp$mcmc.rhos[,-(1:1000)]))$mode
 
-library(ggplot2)
+#library(ggplot2)
 plotModalBlockMap(blocks+1, x=NewHavenHousing)
 
 
@@ -120,4 +121,8 @@ minMax <- range(c(dat2$logval-f1, dat2$logval-f2,
 plotResiduals(f1, NewHavenHousing, blocks, ylim=minMax)
 plotResiduals(f2, NewHavenHousing, blocks, ylim=minMax)
 plotResiduals(f3, NewHavenHousing, blocks, ylim=minMax)
+
+
+
+}
 

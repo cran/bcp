@@ -2,7 +2,6 @@
  bcp: an R package for performing a Bayesian analysis
  of change point problems on a general graph.
 
- Copyright (C) 2012 Xiaofei Wang and Jay Emerson
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,6 +16,10 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, a copy is available at
  http://www.r-project.org/Licenses/
+
+
+- 2013:  Coded originally by Xiaofei Wang and John W. Emerson
+- 2026:  Edited by Kaiguang Zhao to fix CRAN issues
 
  -------------------
  FILE: CbcpgraphR.cpp  */
@@ -92,13 +95,13 @@ void recomputeVals(Graph &graph, Partition &components)
   DoubleVec B(components.size(), 0.0);
   DoubleVec means(components.size(), 0.0);
   int currblock, i;
-  for (i = 0; i < graph.nodes.size(); i++) {
+  for (i = 0; i < (int) graph.nodes.size(); i++) {
     currblock = graph.nodes[i].component;
     means[currblock] += graph.nodes[i].value[0];
     //   Rprintf("memb:%d, val:%0.2f means:%0.2f\n", currblock, graph.nodes[i].value, means[currblock]);
     // W[currblock] += graph.nodes[i].value * graph.nodes[i].value;
   }
-  for (i = 0; i < components.size(); i++) {
+  for (i = 0; i <  (int) components.size(); i++) {
     means[i] /= components[i].size;
     B[i] = components[i].size * pow(means[i], 2);
     // W[i] -= B[i];
@@ -130,14 +133,14 @@ void updateComponentsForMerge(GraphParams &params, MCMC &mcmc, Partition &compon
       graph.boundarymat[currblock][i] = 0;   // currblock effectively nonexistent now
     }
   }
-  if (currblock == components.size() - 1) {
+  if (currblock ==  (int) components.size() - 1) {
     components.pop_back();
   } else {
     components[currblock] = components.back();
     components.pop_back();
 
     for (i = 0; i < params.nn; i++) {
-      if (graph.nodes[i].component == components.size()) {
+      if (graph.nodes[i].component == (int) components.size()) {
         graph.nodes[i].component = currblock;
       }
       if (params.boundaryType == 1) {
@@ -175,7 +178,7 @@ void fullPixelPass(Graph &graph, Partition &components, GraphParams &params,
     // loop through all possible components
     for (j = 0; j < maxComp; j++) {
       for (tau = 0; tau < 2; tau++) {
-        if (j == components.size()){
+        if (j == (int)  components.size()){
           if (tau == 0) {
             Component newestBlock(params, graph.nodes[i], graph);
             possibleBlocks.push_back(newestBlock);
@@ -395,7 +398,7 @@ void activePixelPass(Graph &graph, Partition &components, GraphParams &params,
           continue;
         }
         for (tau = 0; tau < 2; tau++) {
-          if (j == components.size()){
+          if (j == (int) components.size()){
             if (tau == 0) {
                 Component newestBlock(params, graph.nodes[i], graph);
                 possibleBlocks.push_back(newestBlock);
@@ -475,7 +478,7 @@ SEXP rcpp_ppmR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP padj, SEXP pmcmcr
   // Rprintf("Initializing graph\n");
   for (i = 0; i < params.nn; i++) {
     graph.nodes[i].calcActiveAndBound(graph.nodes);
-    if ((int) membInit[i] >= components.size()) {
+    if ((int) membInit[i] >= (int)  components.size()) {
       Component newComp(params, graph.nodes[i], graph);
       components.push_back(newComp);
     } else {
@@ -490,7 +493,7 @@ SEXP rcpp_ppmR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP padj, SEXP pmcmcr
       w0[i] = params.w[0];
   }
   // Rprintf("ybar:%0.4f\n", graph.mean);
-  for (i = 0; i < components.size(); i++) {
+  for (i = 0; i < (int) components.size(); i++) {
     components[i].changeTau(params, helpers, w0, 0);
     // components[i].print();
   }

@@ -6,7 +6,7 @@
 \title{Array CGH data set of Coriell cell lines}
 \format{A data frame containing five variables: first is clone name, second is clone chromosome, third is   clone position, fourth and fifth  are log2ratio for two cell lines.}
 \source{
-\url{http://www.nature.com/ng/journal/v29/n3/full/ng754.html}
+\url{ https://www.nature.com/articles/ng754}
 }
 \usage{
 coriell
@@ -20,7 +20,7 @@ demo(coriell)
 }
 \references{
 \enumerate{ 
-\item Olshen, A. B., Venkatraman, E. S., Lucito, R., Wigler, M. (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572. url: \url{http://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
+\item Olshen, A. B., Venkatraman, E. S., Lucito, R., Wigler, M. (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572. url: \url{https://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
 \item Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measurement of DNA copy number, \emph{Nature Genetics}, \bold{29}, 263-264. 
 }
 }

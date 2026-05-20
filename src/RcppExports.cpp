@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // rcpp_bcpR
 SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc, SEXP pa, SEXP pw, SEXP pba, SEXP pnreg);
 RcppExport SEXP _bcp_rcpp_bcpR(SEXP pySEXP, SEXP pxSEXP, SEXP pgrpindsSEXP, SEXP pidSEXP, SEXP pmcmcreturnSEXP, SEXP pburninSEXP, SEXP pmcmcSEXP, SEXP paSEXP, SEXP pwSEXP, SEXP pbaSEXP, SEXP pnregSEXP) {
@@ -24,6 +29,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type pba(pbaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type pnreg(pnregSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_bcpR(py, px, pgrpinds, pid, pmcmcreturn, pburnin, pmcmc, pa, pw, pba, pnreg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_bcpM
+SEXP rcpp_bcpM(SEXP pdata, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc, SEXP pa, SEXP pw);
+RcppExport SEXP _bcp_rcpp_bcpM(SEXP pdataSEXP, SEXP pidSEXP, SEXP pmcmcreturnSEXP, SEXP pburninSEXP, SEXP pmcmcSEXP, SEXP paSEXP, SEXP pwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type pdata(pdataSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pid(pidSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pmcmcreturn(pmcmcreturnSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pburnin(pburninSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pmcmc(pmcmcSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pa(paSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pw(pwSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_bcpM(pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -75,29 +97,12 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_bcpM
-SEXP rcpp_bcpM(SEXP pdata, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc, SEXP pa, SEXP pw);
-RcppExport SEXP _bcp_rcpp_bcpM(SEXP pdataSEXP, SEXP pidSEXP, SEXP pmcmcreturnSEXP, SEXP pburninSEXP, SEXP pmcmcSEXP, SEXP paSEXP, SEXP pwSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type pdata(pdataSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pid(pidSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pmcmcreturn(pmcmcreturnSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pburnin(pburninSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pmcmc(pmcmcSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pa(paSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pw(pwSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_bcpM(pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_bcp_rcpp_bcpR", (DL_FUNC) &_bcp_rcpp_bcpR, 11},
+    {"_bcp_rcpp_bcpM", (DL_FUNC) &_bcp_rcpp_bcpM, 7},
     {"_bcp_rcpp_ppm", (DL_FUNC) &_bcp_rcpp_ppm, 12},
     {"_bcp_rcpp_ppmR", (DL_FUNC) &_bcp_rcpp_ppmR, 16},
-    {"_bcp_rcpp_bcpM", (DL_FUNC) &_bcp_rcpp_bcpM, 7},
     {NULL, NULL, 0}
 };
 

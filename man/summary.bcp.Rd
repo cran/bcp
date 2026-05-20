@@ -35,8 +35,9 @@ summary(bcp.0)
 plot(bcp.0, main="Univariate Change Point Example")
 
 ##### An MCMC summary from the ``coda'' package #####
-\dontrun{
-if (require("coda")) {
+\donttest{
+ 
+if(requireNamespace("coda")) {
   bcp.0 <- bcp(testdata, return.mcmc=TRUE)
   bcp.mcmc <- as.mcmc(t(bcp.0$mcmc.means))
   summary(bcp.mcmc)

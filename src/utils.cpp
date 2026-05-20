@@ -68,7 +68,7 @@ int sampleLogLik(vector<MCMCStepGraph> possibleSteps, double maxll)
   DoubleVec llcum(possibleSteps.size());
   
   llcum[0] = exp(possibleSteps[0].lik - maxll);
-  for (j = 1; j < possibleSteps.size(); j++) {
+  for (j = 1; j < (int) possibleSteps.size(); j++) {
     llcum[j] = llcum[j - 1] + exp(possibleSteps[j].lik - maxll);
   }
   
@@ -118,7 +118,7 @@ void updateComponents(GraphParams &params, MCMC &mcmc, Partition &components,
       if (params.doneBurnin) mcmc.movedBlock[nodeId]++;
     }
     components[currblock] = possibleBlocks[0];
-    if (newblock == components.size()) {
+    if (newblock == (int) components.size()) {
       components.push_back(possibleBlocks[index+1]);
     } else {
       components[newblock] = possibleBlocks[index+1];
@@ -126,7 +126,7 @@ void updateComponents(GraphParams &params, MCMC &mcmc, Partition &components,
   } else {
     components[currblock] = possibleBlocks[currblock];
     
-    if (newblock == components.size()) {
+    if (newblock ==  (int) components.size()) {
       components.push_back(possibleBlocks[newblock]);
     } else {
       components[newblock] = possibleBlocks[newblock];
@@ -141,14 +141,14 @@ void updateComponents(GraphParams &params, MCMC &mcmc, Partition &components,
   }
   
   if (components[currblock].size == 0) {
-    if (currblock == components.size() - 1) {
+    if (currblock ==   (int) components.size() - 1) {
       components.pop_back();
     } else {
       components[currblock] = components.back();
       components.pop_back();
       
-      for (i = 0; i < graph.nodes.size(); i++) {
-        if (graph.nodes[i].component == components.size()) {
+      for (i = 0; i <  (int) graph.nodes.size(); i++) {
+        if (graph.nodes[i].component ==  (int)components.size()) {
           graph.nodes[i].component = currblock;
         }
         
@@ -165,7 +165,7 @@ void updateComponents(GraphParams &params, MCMC &mcmc, Partition &components,
 
 void printPartition(Partition &components)
 {
-  for (int i = 0; i < components.size(); i++) {
+  for (int i = 0; i <  (int)  components.size(); i++) {
     Rprintf("i:%d ", i);
     components[i].print();
   }

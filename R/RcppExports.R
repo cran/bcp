@@ -5,15 +5,15 @@ rcpp_bcpR <- function(py, px, pgrpinds, pid, pmcmcreturn, pburnin, pmcmc, pa, pw
     .Call('_bcp_rcpp_bcpR', PACKAGE = 'bcp', py, px, pgrpinds, pid, pmcmcreturn, pburnin, pmcmc, pa, pw, pba, pnreg)
 }
 
+rcpp_bcpM <- function(pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw) {
+    .Call('_bcp_rcpp_bcpM', PACKAGE = 'bcp', pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw)
+}
+
 rcpp_ppm <- function(pdata, pid, padj, pmcmcreturn, pburnin, pmcmc, pa, pc, pmembs, pboundaryType, p1, pfreqAPP) {
     .Call('_bcp_rcpp_ppm', PACKAGE = 'bcp', pdata, pid, padj, pmcmcreturn, pburnin, pmcmc, pa, pc, pmembs, pboundaryType, p1, pfreqAPP)
 }
 
 rcpp_ppmR <- function(py, px, pgrpinds, pid, padj, pmcmcreturn, pburnin, pmcmc, pa, pc, pmembs, pboundaryType, pba, p1, pfreqAPP, pnreg) {
     .Call('_bcp_rcpp_ppmR', PACKAGE = 'bcp', py, px, pgrpinds, pid, padj, pmcmcreturn, pburnin, pmcmc, pa, pc, pmembs, pboundaryType, pba, p1, pfreqAPP, pnreg)
-}
-
-rcpp_bcpM <- function(pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw) {
-    .Call('_bcp_rcpp_bcpM', PACKAGE = 'bcp', pdata, pid, pmcmcreturn, pburnin, pmcmc, pa, pw)
 }
 

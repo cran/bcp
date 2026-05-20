@@ -57,7 +57,7 @@ public:
   {
     boundlen = 0;
     
-    for (int i = 0; i < neighbors.size(); i++) {
+    for (int i = 0; i < (int) neighbors.size(); i++) {
       boundlen += (component != nodes[neighbors[i]].component);
     }
     
@@ -71,7 +71,7 @@ public:
   }
   void printNeighbors(vector<Node> &nodes)
   {
-    for (int i = 0; i < neighbors.size(); i++) {
+    for (int i = 0; i <  (int) neighbors.size(); i++) {
       Rprintf("nb: %d, boundlen: %d, nb-comp:%d\n", neighbors[i], boundlen,
               nodes[neighbors[i]].component);
     }
@@ -107,8 +107,8 @@ public:
       DoubleVec nodesum(1);
       nrow = data.size();
       
-      for (i = 0; i < nrow; i++) {
-        if (ids[i] > curr_id) { // on to next location
+      for (i = 0; i < (int) nrow; i++) {
+        if ( (int) ids[i] > curr_id) { // on to next location
           Node node(nodesum, (int) membs[curr_id], nodesize, curr_id, adj);
           nodes.push_back(node);
           curr_id++;
@@ -137,8 +137,8 @@ public:
       IntegerVector ids(pid);
       DoubleVec nodesum(data.ncol());
       
-      for (i = 0; i < data.nrow(); i++) {
-        if (ids[i] > curr_id) { // on to next location
+      for (i = 0; i <  (int) data.nrow(); i++) {
+        if ( (int)  ids[i] > curr_id) { // on to next location
           Node node(nodesum, (int) membs[curr_id], nodesize, curr_id, adj);
           nodes.push_back(node);
           curr_id++;
@@ -146,7 +146,7 @@ public:
           if (M < (int) membs[i] + 1) {
             M = (int) membs[i] + 1;
           }
-          for (j = 0; j < data.ncol(); j++) {
+          for (j = 0; j < (int) data.ncol(); j++) {
             mean += data(i, j);
             sumysq += pow(data(i, j), 2);
             nodesum[j] = data(i,j);
@@ -170,7 +170,7 @@ public:
       IntVec vboundary(data.nrow(), 0);
       boundarymat.assign(M, vboundary);
     }
-    for (i = 0; i < nodes.size(); i++) {
+    for (i = 0; i < (int) nodes.size(); i++) {
       for (j = 0; j < nodes[i].neighbors.size(); j++) {
         nbComponent = nodes[nodes[i].neighbors[j]].component;
         
@@ -184,17 +184,17 @@ public:
   void print(bool all = false)
   {
     Rprintf("overall mean:%0.2f, overall ysq:%0.2f, num pixels: %d\n", 
-            mean, sumysq, nodes.size());
+            mean, sumysq, (int) nodes.size());
     
     if (all) {
-      for (int i = 0; i < nodes.size(); i++) {
+      for (int i = 0; i < (int) nodes.size(); i++) {
         Rprintf("Node i:%d in block: %d, size:%d, sum(obs):%0.2f, boundlen: %d\n", i, nodes[i].component, 
                 nodes[i].size, nodes[i].value[1], nodes[i].boundlen);
       }
       
       Rprintf("Boundary matrix\n");
       
-      for (int i = 0; i < nodes.size(); i++) {
+      for (int i = 0; i < (int) nodes.size(); i++) {
         for (int j = 0; j < 3; j++) {
           Rprintf("%d", boundarymat[j][i]);
         }
@@ -208,7 +208,7 @@ public:
     nodes[nodeId].component = componentId;
     nodes[nodeId].calcActiveAndBound(nodes);
     
-    for (int i = 0; i < nodes[nodeId].neighbors.size(); i++) {
+    for (int i = 0; i < (int)  nodes[nodeId].neighbors.size(); i++) {
       nodes[nodes[nodeId].neighbors[i]].calcActiveAndBound(nodes);
     }
   }
@@ -218,7 +218,7 @@ public:
     int boundaryOld = 0;
     int neighborNodeId, nbBoundaryOld, i, j;
     
-    for (i = 0; i < nodes[nodeId].neighbors.size(); i++) {
+    for (i = 0; i < (int) nodes[nodeId].neighbors.size(); i++) {
       neighborNodeId = nodes[nodeId].neighbors[i];
       
       if (nodes[neighborNodeId].component == currblock) {
@@ -231,7 +231,7 @@ public:
       
       nbBoundaryOld = 0;
       
-      for (j = 0; j < nodes[neighborNodeId].neighbors.size(); j++) {
+      for (j = 0; j < (int) nodes[neighborNodeId].neighbors.size(); j++) {
         if (nodes[nodes[neighborNodeId].neighbors[j]].component == currblock
               && nodes[neighborNodeId].component != currblock) {
           nbBoundaryOld = 1;
@@ -254,8 +254,8 @@ public:
       IntVec vboundary(params.nn, 0);
       IntMatrix boundarymat2(M, vboundary);
       
-      for (i = 0; i < nodes.size(); i++) {
-        for (j = 0; j < nodes[i].neighbors.size(); j++) {
+      for (i = 0; i < (int) nodes.size(); i++) {
+        for (j = 0; j < (int) nodes[i].neighbors.size(); j++) {
           nbblock = nodes[nodes[i].neighbors[j]].component;
           
           if (nodes[i].component != nbblock && boundarymat2[nbblock][i] == 0) {
@@ -265,7 +265,7 @@ public:
         }
       }
       
-      for (i = 0; i < nodes.size(); i++) {
+      for (i = 0; i < (int) nodes.size(); i++) {
         for (j = 0; j < M; j++) {
           if (boundarymat2[j][i] != boundarymat[j][i]) {
             Rprintf("ERROR:\n");
@@ -278,7 +278,7 @@ public:
       }
       
     } else if (params.boundaryType == 2) {
-      for (i = 0; i < nodes.size(); i++) {
+      for (i = 0; i < (int) nodes.size(); i++) {
         for (j = 0; j < nodes[i].neighbors.size(); j++) {
           blen += nodes[nodes[i].neighbors[j]].component != nodes[i].component;
         }
@@ -290,10 +290,10 @@ public:
     int totBound = 0;
     int totBound2 = 0;
     int i, j, nbBlock;
-    for (i = 0; i < nodes.size(); i++) {
+    for (i = 0; i <(int)  nodes.size(); i++) {
       IntVec blen(M, 0);
       
-      for (j = 0; j < nodes[i].neighbors.size(); j++) {
+      for (j = 0; j < (int) nodes[i].neighbors.size(); j++) {
         nbBlock = nodes[nodes[i].neighbors[j]].component;
         
         if (blen[nbBlock] == 0 && nbBlock != nodes[i].component) {
@@ -303,7 +303,7 @@ public:
       }
     }
     
-    for (i = 0; i < nodes.size(); i++) {
+    for (i = 0; i < (int) nodes.size(); i++) {
       for (j = 0; j < M; j++) {
         totBound2 += boundarymat[j][i];
       }
@@ -336,7 +336,7 @@ public:
     size = node.size;
     Z = 0;
     
-    for (int i = 0; i < node.value.size(); i++) {
+    for (int i = 0; i < (int) node.value.size(); i++) {
       mean.push_back(node.value[i]/node.size);
       Z += pow(mean[i], 2);
     }
@@ -349,7 +349,7 @@ public:
     Z = pow(mean[0], 2);
     obsIds = zeros<uvec>(params.nn2);
     uvec these = find(graph.ids==node.id);
-    for (int i = 0; i < these.n_rows; i++) {
+    for (int i = 0; i < (int) these.n_rows; i++) {
       obsIds[these[i]] = 1;
     }
     nodeIds = zeros<uvec>(params.nn);
@@ -367,7 +367,7 @@ public:
     mean[0] = ((size - node.size) * mean[0] + node.value[0]) / size;
     Z = size * pow(mean[0], 2);
     uvec these = find(graph.ids==node.id);
-    for (int i = 0; i < these.n_rows; i++) {
+    for (int i = 0; i < (int) these.n_rows; i++) {
       obsIds[these[i]] = 1;
     }
     nodeIds[node.id] = 1;
@@ -375,7 +375,7 @@ public:
   void addNode(Node &node) { // multivariate
     size += node.size;
     Z = 0;
-    for (int i = 0; i < node.value.size(); i++) {
+    for (int i = 0; i < (int) node.value.size(); i++) {
       mean[i] = ((size - node.size) * mean[i] + node.value[i]) / size;
       Z += pow(mean[i], 2); 
     }
@@ -390,7 +390,7 @@ public:
     mean[0] = ((size - node.size) * mean[0] + node.value[0]) / size;
     Z = size * pow(mean[0], 2);
     uvec these = find(graph.ids==node.id);
-    for (int i = 0; i < these.n_rows; i++) {
+    for (int i = 0; i <  (int) these.n_rows; i++) {
       obsIds[these[i]] = 1;
     }
     nodeIds[node.id] = 1;
@@ -401,12 +401,12 @@ public:
     // recompute the values for the current component (assuming we move this node to another component)
     Z = 0;
     if (size == node.size) {
-      for (i = 0; i < node.value.size(); i++) {
+      for (i = 0; i <  (int) node.value.size(); i++) {
         mean[i] = 0.0;
       }
       size = 0;
     } else {
-      for (i = 0; i < node.value.size(); i++) {
+      for (i = 0; i <  (int) node.value.size(); i++) {
         mean[i] = (mean[i] * size - node.value[i]) / (size - node.size);
         Z += pow(mean[i], 2);
       }
@@ -428,7 +428,7 @@ public:
       Z = size * pow(mean[0], 2);
     }
     uvec these = find(graph.ids==node.id);
-    for (int i = 0; i < these.n_rows; i++) {
+    for (int i = 0; i < (int)  these.n_rows; i++) {
       obsIds[these[i]] = 0;
     }
     nodeIds[node.id] = 0;

@@ -17,7 +17,7 @@ interval.prob(object, start, end)
 The function \code{interval.prob()} estimates the probability of at least one
 change point in the specified interval of sequential observations; it may only be used when \code{return.mcmc=TRUE}.
 }
-\details{
+\value{
 For sequential data only, the function returns an estimate of the posterior probability of at least one change point in the specified interval.
 }
 \note{

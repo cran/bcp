@@ -51,6 +51,8 @@ If an adjacency structure (adj) is provided, then the data are assumed to reside
 
  Posterior Probability of a Change: location in the sequence versus the relative frequency of iterations which resulted in a change point.
 }
+\value{No return value, called for plotting the result}
+
 \examples{
 testdata <- cbind( c(rnorm(50), rnorm(50, -5, 1), rnorm(50)),
 c(rnorm(50), rnorm(50, 10.8, 1), rnorm(50, -3, 1)) )

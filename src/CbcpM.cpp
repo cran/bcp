@@ -2,7 +2,6 @@
  bcp: an R package for performing a Bayesian analysis
  of change point problems.
 
- Copyright (C) 2013 Susan Wang and John W. Emerson
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,6 +16,9 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, a copy is available at
  http://www.r-project.org/Licenses/
+
+- 2013:  Coded originally by Xiaofei Wang and John W. Emerson
+- 2026:  Edited by Kaiguang Zhao to fix CRAN issues
 
  -------------------
  FILE: CbcpM.cpp  */
@@ -82,7 +84,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers, Params &params)
   DoubleVec bmean1(params.kk, 0);
   DoubleVec bmean2(params.kk, 0);
   DoubleVec bmean3(params.kk, 0);
-  double bZ1, bZ2, bZ3;
+  double bZ1=0.0, bZ2=0.0, bZ3=0.0; // 'bZ1' may be used uninitialized [-Wmaybe-uninitialized]
 
   IntVec bvals(2);
   DoubleVec Wvals(2);

@@ -6,10 +6,10 @@
 #' @format A data frame containing five variables: first is clone name, second is clone chromosome, third is   clone position, fourth and fifth  are log2ratio for two cell lines.
 #' @references 
 #' \enumerate{ 
-#' \item Olshen, A. B., Venkatraman, E. S., Lucito, R., Wigler, M. (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572. url: \url{http://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
+#' \item Olshen, A. B., Venkatraman, E. S., Lucito, R., Wigler, M. (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572. url: \url{https://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
 #' \item Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measurement of DNA copy number, \emph{Nature Genetics}, \bold{29}, 263-264. 
 #' }
-#' @source \url{http://www.nature.com/ng/journal/v29/n3/full/ng754.html}
+#' @source \url{ https://www.nature.com/articles/ng754}
 #' @keywords datasets
 #' @examples 
 #' demo(coriell)
@@ -52,7 +52,7 @@ NULL
 #' @docType data
 #' @usage NewHavenHousing
 #' @description Location, 2011 assessed value, and physical characteristics for 244 houses in a region of New Haven, CT.
-#' @source The data can be scraped from the New Haven, CT Online Assessment Database \url{http://gis.vgsi.com/newhavenct/}
+#' @source The data can be scraped from the New Haven, CT Online Assessment Database \url{https://gis.vgsi.com/newhavenct/}
 #' @references 
 #' Xiaofei Wang and John W. Emerson (2015). Bayesian Change Point Analysis of Linear Models on General Graphs, \emph{Working Paper}.
 #' @keywords datasets
@@ -96,7 +96,7 @@ NULL
 #' @references 
 #' \enumerate{ 
 #' \item J. Bai and P. Perron (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
-#' \item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1--38. \url{http://www.jstatsoft.org/v07/i02/}.
+#' \item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1--38. \url{https://www.jstatsoft.org/v07/i02/}.
 #' }
 #' @source The data is available online in the data archive of the
 #' \emph{Journal of Applied Econometrics}. url: 

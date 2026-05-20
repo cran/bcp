@@ -16,7 +16,7 @@ makeAdjGrid(n, m = NULL, k = 8)
 \description{
 \code{makeAdjGrid()} produces a sparse representation of the adjacency structure for grid graphs, useful as the \code{adj} argument in \code{bcp()}.
 }
-\details{
+\value{
 \code{makeAdjGrid()} produces a list representation of the adjacency structure for grid graphs. The \eqn{i}-th entry in the list gives a vector of neighbor ids for the \eqn{i}-th node. Note that neighbor ids are offset by 1 because indexing starts at 0 in C++.
 If \code{k = 8}, then we assume each node is joined via edges to its 8 neighbors in the (top left, top middle, top right, left, right, bottom left, bottom middle, and bottom right) directions, where applicable. If \code{k = 4}, then we assume each node is joined via edges to its 4 neighbors in the (top, right, bottom, left) directions, where applicable.
 }
@@ -29,15 +29,18 @@ adj4 <- makeAdjGrid(10, 5, 4)
 
 
 ### show a grid example
-\dontrun{
-set.seed(5)
-adj <- makeAdjGrid(20)
-z <- rep(c(0, 2), each=200)
-y <- z + rnorm(400, sd=1)
-out <- bcp(y, adj=adj, burnin=500, mcmc=500)
+\donttest{
 
 if (require("ggplot2")) {
-  df <- data.frame(mean=z, data = y, post.means = out$posterior.mean[,1], 
+
+  set.seed(5)
+  adj <- makeAdjGrid(20)
+  z   <- rep(c(0, 2), each=200)
+  y   <- z + rnorm(400, sd=1)
+  out <- bcp(y, adj=adj, burnin=500, mcmc=500)
+
+
+  df  <- data.frame(mean=z, data = y, post.means = out$posterior.mean[,1], 
                    post.probs = out$posterior.prob, 
                    i = rep(1:20, each=20), j = rep(1:20, times=20))
 

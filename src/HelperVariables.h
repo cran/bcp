@@ -39,7 +39,7 @@ public:
     Y = as<colvec>(y);
     X = as<mat>(x);
     pred_cols = zeros<uvec>(X.n_cols-1); // this feels like something that ought not to be needed
-    for (int i = 0; i < X.n_cols-1; i++) {
+    for (int i = 0; i < (int) X.n_cols-1; i++) {
       pred_cols[i] = i+1;
     }
   }
@@ -55,13 +55,13 @@ public:
     cumysq.push_back(pow(Y[0], 2));
     cumksize.push_back(1); // the number of obs per location (I feel this is buggy... check)
 
-    for (int i = 1; i < X.n_cols; i++) {
+    for (int i = 1; i < (int) X.n_cols; i++) {
       DoubleVec cumxvec(N);
       DoubleVec cumxsqvec(N);
       cumxvec[0] = X(0,i);
       cumxsqvec[0] = pow(X(0,i), 2);
       curr_id = 0;
-      for (int j = 1; j < Y.n_rows; j++) {
+      for (int j = 1; j < (int) Y.n_rows; j++) {
         if (id[j] > curr_id) {
           if (i == 1){
             cumy.push_back(cumy[curr_id] + Y[j]);
@@ -131,8 +131,8 @@ public:
   void print() {
     Rprintf("Helper Variables Print ----\n");
     Rprintf("ybar:%0.2f, cumy[last]:%0.2f", ybar, cumy[Y.n_rows-1]);
-    for (int i = 0; i < cumy.size(); i++) {
-      Rprintf("i:%d, k:%0.2d, Y:%0.2f, Ysq:%0.2f, X:%0.2f, Xsq:%0.2f\n",
+    for (int i = 0; i < (int) cumy.size(); i++) {
+      Rprintf("i:%d, k:%d, Y:%0.2f, Ysq:%0.2f, X:%0.2f, Xsq:%0.2f\n",
               i, cumksize[i], cumy[i], cumysq[i], cumx[0][i], cumxsq[0][i]);
     }
   }

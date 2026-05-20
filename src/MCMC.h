@@ -77,7 +77,7 @@ public:
     if (!params.reg) B *= params.kk;
     b = components.size();
 
-    for (i = 0; i < components.size(); i++) {
+    for (i = 0; i < (int) components.size(); i++) {
       W -= components[i].Z;
       B += components[i].Z;
       if (params.reg) {
@@ -88,7 +88,7 @@ public:
 
     }
     if (params.reg) w = w0;
-    for (i = 0; i < params.nn; i++) {
+    for (i = 0; i < (int) params.nn; i++) {
       if (params.boundaryType == 1) {
         for (j = 0; j < b; j++) {
           len += graph.boundarymat[j][i];
@@ -161,12 +161,12 @@ public:
         b += 1 * (newCompId == b) - 1 * (partition[node.component].size == node.size);
         // update bound length
         if (params.boundaryType == 1) {
-          if (newCompId >= graph.boundarymat.size()) {
+          if (newCompId >= (int) graph.boundarymat.size()) {
             IntVec vboundary(params.nn, 0);
             graph.boundarymat.push_back(vboundary);
           }
           neighborsOldBlock = 0;
-          for (i = 0; i < node.neighbors.size(); i++) {
+          for (i = 0; i < (int) node.neighbors.size(); i++) {
             // subtract neighboring nodes that are no longer on the boundary of oldComp
             // this disqualifies any neighboring nodes that are in oldComp
             if (graph.nodes[node.neighbors[i]].component != node.component) {
@@ -174,7 +174,7 @@ public:
               // check if any of their other neighbors are in oldComp
               neighborOfOldComp = 0;
               Node neighborNode = graph.nodes[node.neighbors[i]];
-              for (j = 0; j < neighborNode.neighbors.size(); j++) {
+              for (j = 0; j < (int) neighborNode.neighbors.size(); j++) {
                 if (neighborNode.neighbors[j] == node.id) {
                   continue;
                 }
@@ -198,14 +198,14 @@ public:
 
         } else if (params.boundaryType == 2) {
           len -= 2 * node.boundlen;
-          for (i = 0; i < node.neighbors.size(); i++) {
+          for (i = 0; i < (int) node.neighbors.size(); i++) {
             len += 2 * (graph.nodes[node.neighbors[i]].component != newCompId);
           }
         }
 
         // update globals
         Zdiff = partition[node.component].Z - newcomp.Z - oldcomp.Z;
-        if (newCompId < partition.size()) {
+        if (newCompId < (int)  partition.size()) {
           Zdiff += partition[newCompId].Z;
         }
         B -= Zdiff;
@@ -219,7 +219,7 @@ public:
         Q += oldcomp.Q;
         K += oldcomp.K;
         logC += oldcomp.logC;
-        if (newCompId < partition.size()) {
+        if (newCompId < (int) partition.size()) {
           Q -= partition[newCompId].Q;
           K -= partition[newCompId].K;
           logC -= partition[newCompId].logC;
@@ -236,14 +236,14 @@ public:
 
       // update bound length
       if (params.boundaryType == 1) {
-        if (newCompId >= graph.boundarymat.size()) {
+        if (newCompId >= (int)  graph.boundarymat.size()) {
           IntVec vboundary(params.nn, 0);
           graph.boundarymat.push_back(vboundary);
         }
 
         neighborsOldBlock = 0;
 
-        for (i = 0; i < node.neighbors.size(); i++) {
+        for (i = 0; i < (int) node.neighbors.size(); i++) {
           // subtract neighboring nodes that are no longer on the boundary of oldComp
           // this disqualifies any neighboring nodes that are in oldComp
           if (graph.nodes[node.neighbors[i]].component != node.component) {
@@ -252,7 +252,7 @@ public:
             neighborOfOldComp = 0;
             Node neighborNode = graph.nodes[node.neighbors[i]];
 
-            for (j = 0; j < neighborNode.neighbors.size(); j++) {
+            for (j = 0; j < (int) neighborNode.neighbors.size(); j++) {
               if (neighborNode.neighbors[j] == node.id) {
                 continue;
               }
@@ -282,14 +282,14 @@ public:
       } else if (params.boundaryType == 2) {
         len -= 2 * node.boundlen;
 
-        for (i = 0; i < node.neighbors.size(); i++) {
+        for (i = 0; i < (int) node.neighbors.size(); i++) {
           len += 2 * (graph.nodes[node.neighbors[i]].component != newCompId);
         }
       }
 
       Zdiff = partition[node.component].Z - newcomp.Z - oldcomp.Z;
 
-      if (newCompId < partition.size()) {
+      if (newCompId < (int) partition.size()) {
         Zdiff += partition[newCompId].Z;
       }
 
@@ -335,7 +335,7 @@ public:
   void print() {
     Rprintf("lik:%0.2f, W:%0.2f, B:%0.2f, logC:%0.2f, K:%0.2f, Q:%0.2f, len =%d, b=%d\n",
             lik, W, B, logC, K, Q, len, b);
-    for (int i = 0; i < w.size(); i++) Rprintf("w: %0.6f", w[i]);
+    for (int i = 0; i < (int) w.size(); i++) Rprintf("w: %0.6f", w[i]);
     Rprintf("\n");
   }
 };
@@ -373,7 +373,7 @@ public:
 
   MCMCStepSeq(HelperVariables &helpers, Params &params) : MCMCStep()
   {
-    for (int i = 0; i < params.nn - 1; i++) {
+    for (int i = 0; i < (int)  params.nn - 1; i++) {
       rho.push_back(0);
       if (params.reg) {
         if (i > 0 && i <= params.kk)
@@ -400,7 +400,7 @@ public:
     } else {
       double bZtmp = 0;
       DoubleVec bmean1(params.kk);
-      for (int i = 0; i < params.kk; i++) {
+      for (int i = 0; i < (int) params.kk; i++) {
         bmean1[i] = helpers.cumymat[i][params.nn - 1] / params.nn2;
         bZtmp += pow(bmean1[i], 2) * params.nn2;
       }
@@ -419,7 +419,7 @@ public:
             b, K, logC, Q, lik, w[1]);
     if (btau.size() == 0)
       return;
-    for (int i = 0; i < btau.size(); i++) {
+    for (int i = 0; i < (int)  btau.size(); i++) {
       Rprintf("i:%d   tau:%d  bend:%d  bsize:%d  bZ:%0.2f  bK:%0.2f bQ:%0.2f\n", i,
               btau[i], bend[i], bsize[i], bZ[i], bK[i], bQ[i]);
     }

@@ -130,7 +130,7 @@ b <- rep(c(3,-3), each=50)
 y <- b*x + rnorm(100)
 bcp.3a <- bcp(y, x)
 # in the two plots that follow, the location IDs are used as the plot characters
-par(mfrow=c(1,2))
+oldpar = par(mfrow=c(1,2))
 plot(y ~ x, type="n", main="Linear Regression: Raw Data")
 text(x, y, as.character(1:100), col=(b/3)+2)
 plot(y ~ x, type="n", main="Linear Regression: Posterior Means")
@@ -144,8 +144,10 @@ y <- b*x + rnorm(100, sd=50)
 bcp.3b <- bcp(y, x)
 plot(bcp.3b, main="Linear Regression Change Point Example")
 
+par(oldpar)
+
 ##### univariate data on a grid #####  
-\dontrun{
+\donttest{
 set.seed(5)
 adj <- makeAdjGrid(20)
 z <- rep(c(0, 2), each=200)
@@ -186,7 +188,7 @@ if (require("ggplot2")) {
 }
 }
 
-\dontrun{
+\donttest{
 ##### multivariate data on a grid #####
 set.seed(5)
 x <- rnorm(6, sd=3)
@@ -211,12 +213,12 @@ adj <- makeAdjGrid(10)
 a <- bcp(y,x,adj=adj, p0=0.4, burnin=500, mcmc=500, p1 = 0)}
 
 ##### univariate data on a graph ##### 
-\dontrun{ 
+\donttest{ 
   demo(bcpgraph)
 }
 
 ###### Real Data Examples ######
-\dontrun{
+\donttest{
 # Coriell chromosome 11: univariate sequential data
 demo(coriell)
 
@@ -242,17 +244,17 @@ demo(NewHaven)
 
 \item Daniel Barry and J. A. Hartigan (1994), A Product Partition Model for Image Restoration, \emph{New Directions in Statistical Data Analysis and Robustness}, (Monte Verita : Proceedings of the Cento Stefano Franscini Ascona), Birkhauser, 9-23.
 
-\item Chandra Erdman and John W. Emerson (2008), A Fast Bayesian Change Point Analysis for the Segmentation of Microarray Data, \emph{Bioinformatics}, 24(19), 2143-2148. \url{https://www.ncbi.nlm.nih.gov/pubmed/18667443}.
+\item Chandra Erdman and John W. Emerson (2008), A Fast Bayesian Change Point Analysis for the Segmentation of Microarray Data, \emph{Bioinformatics}, 24(19), 2143-2148. \url{https://pubmed.ncbi.nlm.nih.gov/18667443/}.
 
-\item Chandra Erdman and John W. Emerson (2007), bcp: An R Package for Performing a Bayesian Analysis of Change Point Problems. \emph{Journal of Statistical Software}, 23(3), 1-13. \url{http://www.jstatsoft.org/v23/i03/}.
+\item Chandra Erdman and John W. Emerson (2007), bcp: An R Package for Performing a Bayesian Analysis of Change Point Problems. \emph{Journal of Statistical Software}, 23(3), 1-13. \url{https://www.jstatsoft.org/v23/i03/}.
 
-\item A. B. Olshen, E. S. Venkatraman, R. Lucito, M. Wigler (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572.  \url{http://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
+\item A. B. Olshen, E. S. Venkatraman, R. Lucito, M. Wigler (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572.  \url{https://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
 
 \item Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measurement of DNA copy number, \emph{Nature Genetics}, \bold{29}, 263-264. 
 
 \item Xiaofei Wang and John W. Emerson (2015). Bayesian Change Point Analysis of Linear Models on General Graphs, \emph{Working Paper}.
 
-\item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1-38. \url{http://www.jstatsoft.org/v07/i02/}. 
+\item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1-38. \url{https://www.jstatsoft.org/v07/i02/}. 
 }
 }
 \seealso{

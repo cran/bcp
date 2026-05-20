@@ -23,6 +23,8 @@ FILE: Cbcp.cpp  */
 
 #include "bcp.h"
 
+using SPAN=arma::span; //span is also defined in std; get an alias to the one in arma
+
 int sampleFromLikelihoods(DoubleVec &likvals, double maxlik) {
   int i;
   int k = likvals.size();
@@ -54,13 +56,13 @@ DoubleVec matrixCalcs(HelperVariables& helpers,
   if (start > 0)
     start = helpers.cumksize[start-1];
   end = helpers.cumksize[end]-1;
-  mat Xtilde = Pmat*helpers.X(span(start, end), span(1,helpers.X.n_cols-1));
+  mat Xtilde = Pmat*helpers.X(SPAN(start, end), SPAN(1,helpers.X.n_cols-1));
   mat XXW = Xtilde.t()*Xtilde;
   bool ok = FALSE;
   while(!ok) {
     for (int i = 0; i < params.kk; i++) {
       if (XXW(i,i) < 1e-12) {
-        Xtilde = Pmat*(helpers.X(span(start, end), span(1,helpers.X.n_cols-1))+ mvrnormArma(n, params));
+        Xtilde = Pmat*(helpers.X(SPAN(start, end), SPAN(1,helpers.X.n_cols-1))+ mvrnormArma(n, params));
         XXW = Xtilde.t()*Xtilde;
         break;
       }
@@ -427,7 +429,7 @@ MCMCStepSeq pass(MCMCStepSeq &step, HelperVariables &helpers,
 SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP pburnin, SEXP pmcmc, SEXP pa,
                SEXP pw, SEXP pba, SEXP pnreg) {
   // INITIALIZATION OF LOCAL VARIABLES
-  int i, j, m, start, end, start2, end2, resultStart, resultEnd;
+  int i, j, m, start, end, start2, end2, resultStart=0, resultEnd=0;
   double Wtilde, wstar, bmean, xmax, tmpAlpha;
 
   // INITIALIZATION OF OTHER OBJECTS
@@ -505,7 +507,7 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
           start2 = 0;
         }
         end2 = helpers.cumksize[end]-1;
-        mat grpIndMat = grpInds(span(start, end), span(start2, end2));
+        mat grpIndMat = grpInds(SPAN(start, end), SPAN(start2, end2));
 
         tmpAlpha = bmean * (1 - wstar) + helpers.ybar * wstar;
         vec tmpMean = grpIndMat*(ones(step.bsize[i], 1)* tmpAlpha);
@@ -513,22 +515,22 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
         if (mcmcreturn == 1) {
           resultStart = params.nn*m+start;
           resultEnd = params.nn*m+end;
-          results(span(resultStart, resultEnd), 1) = tmpMean;
+          results(SPAN(resultStart, resultEnd), 1) = tmpMean;
         }
         if (m >= burnin)
-          betaposts(span(start, end), 0) += tmpMean;
+          betaposts(SPAN(start, end), 0) += tmpMean;
 
         if (step.btau[i] == 1) {
           mat Pmat = eye(step.bsize[i], step.bsize[i])
           - ones(step.bsize[i],step.bsize[i])/step.bsize[i];
 
-          mat Xtilde = Pmat*helpers.X(span(start2, end2), span(1, params.kk));
+          mat Xtilde = Pmat*helpers.X(SPAN(start2, end2), SPAN(1, params.kk));
           mat XXW = Xtilde.t()*Xtilde;
           bool ok = FALSE;
           while(!ok) {
             for (int ii = 0; ii < params.kk; ii++) {
               if (XXW(ii,ii) < 1e-12) {
-                Xtilde = Pmat*(helpers.X(span(start2, end2), span(1,params.kk))+
+                Xtilde = Pmat*(helpers.X(SPAN(start2, end2), SPAN(1,params.kk))+
                   mvrnormArma(step.bsize[i], params));
                 XXW = Xtilde.t()*Xtilde;
                 break; // this breaks the loop and since !ok, checks for XXW=0 all over again
@@ -543,14 +545,14 @@ SEXP rcpp_bcpR(SEXP py, SEXP px, SEXP pgrpinds, SEXP pid, SEXP pmcmcreturn, SEXP
           mat bhatMat = repmat(bhats.t(), end-start+1, 1);
           fitted += grpIndMat*Xtilde*bhats;
           if (m >= burnin) {
-            betaposts(span(start, end), span(1, params.kk)) += bhatMat;
-            betaposts(span(start, end), 0) -= bhatMat*helpers.X(span(start2, end2), span(1, params.kk)).t()*
+            betaposts(SPAN(start, end), SPAN(1, params.kk)) += bhatMat;
+            betaposts(SPAN(start, end), 0) -= bhatMat*helpers.X(SPAN(start2, end2), SPAN(1, params.kk)).t()*
               ones(step.bsize[i], 1)/step.bsize[i];
           }
           if (mcmcreturn == 1) {
-            results(span(resultStart, resultEnd), 0) = fitted;
-            results(span(resultStart, resultEnd), span(2, params.kk+1)) = bhatMat;
-            results(span(resultStart, resultEnd), 1) -= bhatMat*helpers.X(span(start2, end2), span(1, params.kk)).t()*
+            results(SPAN(resultStart, resultEnd), 0) = fitted;
+            results(SPAN(resultStart, resultEnd), SPAN(2, params.kk+1)) = bhatMat;
+            results(SPAN(resultStart, resultEnd), 1) -= bhatMat*helpers.X(SPAN(start2, end2), SPAN(1, params.kk)).t()*
               ones(step.bsize[i], 1)/step.bsize[i];
           }
 

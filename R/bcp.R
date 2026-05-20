@@ -93,17 +93,17 @@
 #' 
 #' \item Daniel Barry and J. A. Hartigan (1994), A Product Partition Model for Image Restoration, \emph{New Directions in Statistical Data Analysis and Robustness}, (Monte Verita : Proceedings of the Cento Stefano Franscini Ascona), Birkhauser, 9-23.
 #' 
-#' \item Chandra Erdman and John W. Emerson (2008), A Fast Bayesian Change Point Analysis for the Segmentation of Microarray Data, \emph{Bioinformatics}, 24(19), 2143-2148. \url{https://www.ncbi.nlm.nih.gov/pubmed/18667443}.
+#' \item Chandra Erdman and John W. Emerson (2008), A Fast Bayesian Change Point Analysis for the Segmentation of Microarray Data, \emph{Bioinformatics}, 24(19), 2143-2148. \url{https://pubmed.ncbi.nlm.nih.gov/18667443/}.
 #' 
-#' \item Chandra Erdman and John W. Emerson (2007), bcp: An R Package for Performing a Bayesian Analysis of Change Point Problems. \emph{Journal of Statistical Software}, 23(3), 1-13. \url{http://www.jstatsoft.org/v23/i03/}.
+#' \item Chandra Erdman and John W. Emerson (2007), bcp: An R Package for Performing a Bayesian Analysis of Change Point Problems. \emph{Journal of Statistical Software}, 23(3), 1-13. \url{https://www.jstatsoft.org/v23/i03/}.
 #' 
-#' \item A. B. Olshen, E. S. Venkatraman, R. Lucito, M. Wigler (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572.  \url{http://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
+#' \item A. B. Olshen, E. S. Venkatraman, R. Lucito, M. Wigler (2004), Circular binary segmentation for the analysis of array-based DNA copy number data, \emph{Biostatistics}, \bold{5}, 557-572.  \url{https://www.bioconductor.org/packages/release/bioc/html/DNAcopy.html}.
 #' 
 #' \item Snijders \emph{et al.} (2001), Assembly of microarrays for genome-wide measurement of DNA copy number, \emph{Nature Genetics}, \bold{29}, 263-264. 
 #' 
 #' \item Xiaofei Wang and John W. Emerson (2015). Bayesian Change Point Analysis of Linear Models on General Graphs, \emph{Working Paper}.
 #' 
-#' \item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1-38. \url{http://www.jstatsoft.org/v07/i02/}. 
+#' \item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1-38. \url{https://www.jstatsoft.org/v07/i02/}. 
 #' }
 #' @author Xiaofei Wang, Chandra Erdman, and John W. Emerson
 #' @seealso \code{\link{plot.bcp}}, \code{\link{summary.bcp}}, and \code{\link{print.bcp}} for summaries of the results.
@@ -337,7 +337,7 @@
         if (length(w0) != ncol(x)) {
           if (length(w0) == 1) {
             w0 <- rep(w0, ncol(x))
-            print("Incorrect length for w0. I'll assume you wanted each error-to-signal ratio to be iid from U(0, w0).")
+            message("Incorrect length for w0. I'll assume you wanted each error-to-signal ratio to be iid from U(0, w0).")
           } else stop("Incorrect length for w0.")
         }
       }  

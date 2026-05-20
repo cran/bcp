@@ -19,13 +19,16 @@ deflated by the CPI inflation rate.
 }
 \examples{
  
-demo(RealInt)
+ \donttest{
+ demo(RealInt)
+ }
+
 
 }
 \references{
 \enumerate{ 
 \item J. Bai and P. Perron (2003), Computation and Analysis of Multiple Structural Change Models, \emph{Journal of Applied Econometrics}, \bold{18}, 1-22. \url{http://qed.econ.queensu.ca/jae/2003-v18.1/bai-perron/}.
-\item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1--38. \url{http://www.jstatsoft.org/v07/i02/}.
+\item Achim Zeileis, Friedrich Leisch, Kurt Hornik, Christian Kleiber (2002), strucchange: An R Package for Testing for Structural Change in Linear Regression Models, \emph{Journal of Statistical Software}, \bold{7}(2), 1--38. \url{https://www.jstatsoft.org/v07/i02/}.
 }
 }
 \keyword{datasets}
